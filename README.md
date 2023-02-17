@@ -10,12 +10,19 @@ To answer this question, we analyze the Cleveland data file from https://archive
 We attempt to build a classification model using the K-nearest neighbour algorithm to predict heart disease diagnosis. Our model offers a preliminary diagnosis based 2 symptoms. This can save medical costs for patients who are properly diagnosed with heart disease by our model as well as diagnostic time. 
 
 ## Report
-The data analysis report can be found at https://github.com/karlie-tr/dsci-310-group-03/blob/main/Report%20(1).ipynb
+The data analysis report can be found at https://github.com/karlie-tr/dsci-310-group-03 in heart_disease_classifciation.ipynb
 
 ## Usage
 
 ## Dependencies
-R version 4.1.3, R packages listed in {}
+|Package | Version |
+|--------|---------|
+|R|4.1.3|
+|tidyverse |1.3.2|
+|repr|1.1.6|
+|tidymodels|1.0.0|
+|RColorBrewer|1.1-3|
+|cowplot|1.1.1|
 
 ## License Information
 Our project uses the MIT open source license.
