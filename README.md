@@ -1,27 +1,23 @@
-# Team work contract
-## GOALS:
-- Complete all milestones and final project before the due date
-- Have a good team work and equal workload distribution throughout the project
+# Diagnosing Heart Disease
+- Authors: Hanzhang Cao, Karlie Truong, Kaylie Nguyen, Ser Jie Ng
+- Contributors: Hanzhang Cao, Matthias Kammueller, Nicole White
 
-## EXPECTATIONS:
-- Attend group meetings on time per schedule/agreement and notify the group if issues arise and they can’t make it to the meeting
-- Complete assigned task on time
-- Always inform other group members earlier if one isn’t able to finish the work and propose a reasonable alternative deadline
-- Each member should aim to contribute equally as the other group members, to the best of their abilities
-- Help each other out, i.e. work together as a group
-- Reach out for help/discussion when there’s an issue that cannot be solved individually
-- Encourage others to discuss any arising issues with the team
-- Be responsive to group messages either on Slack channel or Instagram group chat
+## About
+The project is developed upon the dsci100 term project by the contributors listed above. We aim to determine: Based on only two predictors gathered from health checkups performed by doctors, does somebody suffer from heart disease?
+
+To answer this question, we analyze the Cleveland data file from https://archive.ics.uci.edu/ml/datasets/Heart+Disease, containing data collected by Robert Detrano at the V.A. Medical Center, Long Beach and Cleveland Clinic Foundation in 1988. This dataset contains 303 instances. 
+
+We attempt to build a classification model using the K-nearest neighbour algorithm to predict heart disease diagnosis. Our model offers a preliminary diagnosis. This can save medical costs for patients who are properly diagnosed with heart disease by our model as well as diagnostic time. 
+
+## Report
+The data analysis report can be found at https://github.com/karlie-tr/dsci-310-group-03/blob/main/Report%20(1).ipynb
+
+## Usage
+
+## Dependencies
+R version 4.1.3, R packages listed in {}
+
+## License Information
+Our project uses the MIT open source license.
 
 
-## POLICIES & PROCEDURES:
-- Set up meeting time 1 week prior using https://www.when2meet.com/ 
-- Having weekly updates to keep the project on the right track
-- Taking meeting agenda and minutes
-- Set up an internal deadline of finishing the project 2-3 days before the official deadline to accommodate potential delays and issues. Due dates for milestone and projects:
-  - Milestone 01: Feb 14, 2023
-  - Milestone 02: Mar 07, 2023
-  - Peer review: Mar 28, 2023
-  - Final project: Apr 04, 2023
-
-- Have everyone do a review and agree on the final version before submission
