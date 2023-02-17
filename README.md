@@ -3,7 +3,7 @@
 - Contributors: Hanzhang Cao, Matthias Kammueller, Nicole White
 
 ## About
-The project is developed upon the dsci100 term project by the contributors listed above. We aim to determine: Based on only two predictors gathered from health checkups performed by doctors, does somebody suffer from heart disease?
+The project is developed upon the dsci100 term project by the contributors listed above. Permission to reuse the data analysis has been given by all contributors. We aim to determine: Based on only two predictors gathered from health checkups performed by doctors, does somebody suffer from heart disease?
 
 To answer this question, we analyze the Cleveland data file from https://archive.ics.uci.edu/ml/datasets/Heart+Disease, containing data collected by Robert Detrano at the V.A. Medical Center, Long Beach and Cleveland Clinic Foundation in 1988. This dataset contains 303 instances. 
 
