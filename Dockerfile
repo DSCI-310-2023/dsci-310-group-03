@@ -1,6 +1,11 @@
-FROM jupyter/r-notebook:r-4.1.3
+FROM rocker/rstudio:4.1.3
 
-RUN Rscript -e "install.packages('remotes', repos='https://cran.us.r-project.org')"
+ENV RENV_VERSION 0.15.2-2
+RUN Rscript -e "install.packages('remotes')"
+RUN Rscript -e "remotes::install_github('rstudio/renv@${RENV_VERSION}')"
 
-RUN Rscript -e "remotes::install_version('cowplot', version='1.1.1')"
-RUN Rscript -e "remotes::install_version('RColorBrewer', version='1.1-2')"
+COPY renv.lock renv.lock
+COPY renv renv
+COPY .Rprofile .
+
+RUN Rscript -e "renv::restore()"
