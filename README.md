@@ -26,7 +26,7 @@ To maintain the reproducibility of this project, we use Docker container images 
     `docker pull karlietr/dsci-310-group-03:latest`
 3. To run the analysis from the Docker container:
     - In terminal:
-    `docker run --r--user root -v $(pwd):/home/jovyan/work -p 8888:8888 dsci-310-group-03:latest`
+    `docker run -it -p 8888:8888 karlietr/dsci-310-group-03:latest`
     - In Jupyter: navigate to `heart_disease_classification.ipynb` then select `Kernel > Restart Kernel and Run All Cells...`
 ### Running the analysis from local computer:
 To run this analysis in your local computer, please install [RStudio](https://posit.co/download/rstudio-desktop/), [Jupyter](https://jupyter.org/install) and the packages with their corresponding versions listed below in Dependencies.
