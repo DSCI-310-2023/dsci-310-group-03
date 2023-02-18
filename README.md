@@ -10,23 +10,30 @@ To answer this question, we analyze the Cleveland data file from https://archive
 We attempt to build a classification model using the K-nearest neighbour algorithm to predict heart disease diagnosis. Our model offers a preliminary diagnosis based 2 symptoms. This can save medical costs for patients who are properly diagnosed with heart disease by our model as well as diagnostic time. 
 
 ## Team work Contract
-Team work contract for group 03 is found in the README.md file in commit ba459c1 (https://github.com/karlie-tr/dsci-310-group-03/tree/ba459c1340d4a1efffd9a90d9d0eecddbd498a81)
+Team work contract for group 03 is found in the README.md file in [commit ba459c1](https://github.com/karlie-tr/dsci-310-group-03/tree/ba459c1340d4a1efffd9a90d9d0eecddbd498a81)
 
 ## Report
-The data analysis report can be found [here] (https://github.com/karlie-tr/dsci-310-group-03/blob/1c9dee99b0c500339d5705034ac46a6c5b25daaa/heart_disease_classification.ipynb)
+The data analysis report can be found [here](https://github.com/karlie-tr/dsci-310-group-03/blob/1c9dee99b0c500339d5705034ac46a6c5b25daaa/heart_disease_classification.ipynb)
 
 ## Usage
+In your terminal, navigate to the folder where you want to store the project then clone it project into your local computer 
+    `git clone https://github.com/karlie-tr/dsci-310-group-03.git'`
+The analysis can be run using 2 different ways:
+# Running the analysis from a container
 To maintain the reproducibility of this project, we use Docker container images to create the same computational environment that the project was created on. In order to run our analysis, please follow the steps listed below:
-1. Create an account and install DockerHub following the instruction [here] (https://docs.docker.com/get-docker/)
-2. In your terminal, navigate to the folder where you want to store the project then clone it project into your local computer 
-    'git clone https://github.com/karlie-tr/dsci-310-group-03.git'
-3. In your terminal, pull the lastest version of the Docker image
-    'docker pull karlietr/dsci-310-group-03:latest'
-4. To run the analysis from the Docker container:
+1. Create an account and install DockerHub following the instruction [here](https://docs.docker.com/get-docker/)
+2. In your terminal, pull the lastest version of the Docker image
+    `docker pull karlietr/dsci-310-group-03:latest`
+3. To run the analysis from the Docker container:
     - In terminal:
-    'docker run --r--user root -v $(pwd):/home/jovyan/work -p 8888:8888 dsci-310-group-03:latest'
-    - In Jupyter: navigate to heart_disease_classification.ipynb then select 'Kernel > Restart Kernel and Run All Cells...'
-
+    `docker run --r--user root -v $(pwd):/home/jovyan/work -p 8888:8888 dsci-310-group-03:latest`
+    - In Jupyter: navigate to `heart_disease_classification.ipynb` then select `Kernel > Restart Kernel and Run All Cells...`
+# Running the analysis from local computer:
+To run this analysis in your local computer, please install [RStudio](https://posit.co/download/rstudio-desktop/), [Jupyter](https://jupyter.org/install) and the packages with their corresponding versions listed below in Dependencies.
+1. In your terminal, navigate to where you cloned the project, then open jupyter using:
+    `jupyter lab`
+The jupyter notebook window should pop up in your browser.
+2. navigate to `heart_disease_classification.ipynb` then select `Kernel > Restart Kernel and Run All Cells...`
 
 ## Dependencies
 |Package | Version |
