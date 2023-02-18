@@ -19,7 +19,7 @@ The data analysis report can be found [here](https://github.com/karlie-tr/dsci-3
 In your terminal, navigate to the folder where you want to store the project then clone it project into your local computer 
     `git clone https://github.com/karlie-tr/dsci-310-group-03.git'`
 The analysis can be run using 2 different ways:
-# Running the analysis from a container
+### Running the analysis from a container
 To maintain the reproducibility of this project, we use Docker container images to create the same computational environment that the project was created on. In order to run our analysis, please follow the steps listed below:
 1. Create an account and install DockerHub following the instruction [here](https://docs.docker.com/get-docker/)
 2. In your terminal, pull the lastest version of the Docker image
@@ -28,7 +28,7 @@ To maintain the reproducibility of this project, we use Docker container images 
     - In terminal:
     `docker run --r--user root -v $(pwd):/home/jovyan/work -p 8888:8888 dsci-310-group-03:latest`
     - In Jupyter: navigate to `heart_disease_classification.ipynb` then select `Kernel > Restart Kernel and Run All Cells...`
-# Running the analysis from local computer:
+### Running the analysis from local computer:
 To run this analysis in your local computer, please install [RStudio](https://posit.co/download/rstudio-desktop/), [Jupyter](https://jupyter.org/install) and the packages with their corresponding versions listed below in Dependencies.
 1. In your terminal, navigate to where you cloned the project, then open jupyter using:
     `jupyter lab`
