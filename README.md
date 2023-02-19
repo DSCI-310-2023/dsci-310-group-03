@@ -17,7 +17,7 @@ The data analysis report can be found [here](https://github.com/karlie-tr/dsci-3
 
 ## Usage
 In your terminal, navigate to the folder where you want to store the project then clone it project into your local computer 
-    `git clone https://github.com/karlie-tr/dsci-310-group-03.git'`
+    `git clone https://github.com/karlie-tr/dsci-310-group-03.git`
 The analysis can be run using 2 different ways:
 ### Running the analysis from a container
 To maintain the reproducibility of this project, we use Docker container images to create the same computational environment that the project was created on. In order to run our analysis, please follow the steps listed below:
@@ -26,7 +26,7 @@ To maintain the reproducibility of this project, we use Docker container images 
     `docker pull karlietr/dsci-310-group-03:latest`
 3. To run the analysis from the Docker container:
     - In terminal:
-    `docker run -it -p 8888:8888 karlietr/dsci-310-group-03:latest`
+    `docker run -p 8888:8888 --rm -v /$(pwd):/home karlietr/dsci-310-group-03:latest`
     - In Jupyter: navigate to `heart_disease_classification.ipynb` then select `Kernel > Restart Kernel and Run All Cells...`
 ### Running the analysis from local computer:
 To run this analysis in your local computer, please install [RStudio](https://posit.co/download/rstudio-desktop/), [Jupyter](https://jupyter.org/install) and the packages with their corresponding versions listed below in Dependencies.
@@ -39,11 +39,11 @@ The jupyter notebook window should pop up in your browser.
 |Package | Version |
 |--------|---------|
 |R|4.1.3|
-|tidyverse |1.3.2|
-|repr|1.1.6|
-|tidymodels|1.0.0|
-|RColorBrewer|1.1-3|
+|tidyverse |1.3.1|
+|tidymodels|0.2.0|
+|RColorBrewer|1.1-2|
 |cowplot|1.1.1|
+|kknn|1.3.1|
 
 ## License Information
 Our project uses the MIT open source license.
