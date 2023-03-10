@@ -47,6 +47,9 @@ The jupyter notebook window should pop up in your browser.
 |RColorBrewer|1.1-2|
 |cowplot|1.1.1|
 |kknn|1.3.1|
+|testthat|3.1.3|
+|vdiffr|1.0.5|
+|devtools|2.4.5|
 
 ## License Information
 Our project uses the MIT open source license.
