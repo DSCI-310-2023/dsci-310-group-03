@@ -24,21 +24,9 @@ cleveland_select <- select(cleveland, -diagnosis_2)
 split_data = initial_split(cleveland_select, prop=0.75, strata=diagnosis)
 training_set <- training(split_data)
 
+source("../R/abstraction_histogram.R")
 
-source("abstraction_histogram.R")
-
-#cholesterol_histogram <- abs_hist(training_set$cholesterol, "Serum Cholesterol (mg/dl)", training_set, training_set$diagnosis, "Percentage of Observations", "Diagnosis")
-
-#cholesterol_histogram_ggplot <- abs_hist(training_set$cholesterol, "Serum Cholesterol (mg/dl)", training_set, training_set$diagnosis, "Percentage of Observations", "Diagnosis")
-
-
-#disp_hist_base <- function() hist(mtcars$disp)
-#disp_hist_ggplot <- ggplot(mtcars, aes(disp)) + geom_histogram()
-
-#vdiffr::expect_doppelganger("abs_hist function histogram", cholesterol_histogram)
-#vdiffr::expect_doppelganger("ggplot2 histogram", cholesterol_histogram_ggplot)
-
-
+# Tests for abstraction of histogram - test if abs_hist function works
 
 test_that("ggplot2 histogram works", {
   cholesterol_histogram_ggplot <- ggplot(training_set, aes(x = cholesterol, fill = diagnosis)) +
