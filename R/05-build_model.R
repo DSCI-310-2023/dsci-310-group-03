@@ -12,10 +12,11 @@
 #'
 #''@example build_model(image_recipe, NULL)
 #'
-#''Function get_best_fit() to obtain the statistics of the best knn_fit after tuning
+#''Function get_optimal_k() to obtain the the optimal number of neighbors k
 #'@param model a fitted model, such as the return from the previous function
+#'@param print_stats a boolean to indicate whether to print the statistics of the best fit model
 #'
-#'@return a dataframe of the statistics for the optimal knn model
+#'@return an integer for the optimal number of neighbors for the knn model
 #'
 #'@example get_best_k(knn_fit)
 #'
@@ -48,10 +49,14 @@ build_model <- function(recipe, optimal, k) {
   return(knn_fit)
 }
 
-get_best_fit <- function(model) {
+get_optimal_k <- function(model, print_stats) {
   best_fit <- knn_fit %>%
     filter(.metric == "accuracy") %>%
     arrange(desc(mean)) %>% 
     slice(1)
-  return(best_fit)
+  if(print_stats =="Yes"){
+  print(best_fit)
+  }
+  optimal_k <- best_fit %>% pull(neighbors)
+  return(optimal_k)
 }
