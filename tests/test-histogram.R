@@ -3,6 +3,7 @@ library(tidymodels)
 library(ggplot2)
 library(devtools)
 library(testthat)
+library(vdiffr)
 
 cleveland <- read_delim("../data/raw/heart_disease_data.csv", 
                         col_names = c('age','sex','chest_pain_type','resting_bp','cholesterol','high_blood_sugar','resting_ecg',
