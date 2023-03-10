@@ -19,6 +19,7 @@
 #'                        'thal','diagnosis','diagnosis_2'),
 #'             separator = ",",
 #'             na_values = "?")
+#'             
 #'  load_data("data/raw/heart_disease_data.csv", 
 #'            c('age','sex','chest_pain_type','resting_bp','cholesterol',
 #'              'high_blood_sugar','resting_ecg',
@@ -38,6 +39,7 @@ load_data <- function(path, names, separator = ",", na_values = "NAs") {
                show_col_types = FALSE,
                na = na_values) |>
     mutate_if(is.character, as.factor)
+  
   return(glimpse(new_data))
 }
 
