@@ -12,14 +12,17 @@ original_df <- data.frame(lunch = c("Pizza","Sushi"),
                           snack = c("Sushi","Donut"),
                           stringsAsFactors = TRUE)
 
-test_that("Return an error message when column does not exist within the data
-           frame",
-          {expect_error(sub_values(iris, Length, 'SETOSA', 'setosa'))})
+test_that("Throw an error message when any of the column or data parameter does 
+          not exist",
+          {# column does not exist
+           expect_error(sub_values(iris, Length, 'SETOSA', 'setosa'))
+           # data frame does not exist 
+           expect_error(sub_values(iris1, Species, 'SETOSA', 'setosa'))
+           # both column and data frame don't exist
+           expect_error(sub_values(iris0, Species0, 'SETOSA', 'setosa'))})
 
-test_that("Return an error message when dataframe does not exist",
-          {expect_error(sub_values(iris1, Species, 'SETOSA', 'setosa'))})
-
-test_that("Return the same data frame if the original value does not exist",
+test_that("Return the same data frame if the original value to be replaced
+          does not exist",
           {expect_identical(iris, sub_values(iris, Species, 'SETOSA', 'SS'))})
 
 

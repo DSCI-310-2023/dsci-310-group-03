@@ -3,7 +3,7 @@
 #' Reading in a data frame and change column types from characters to 
 #' factors
 #'
-#' @param path A single string or a vector of the location if raw file
+#' @param path A single string or a vector of the path to raw file
 #' @param names A vector of names of the columns
 #' @param separator A string of the separator used in the file
 #' @param na_values A string of how the NAs values are represented in the file
@@ -14,7 +14,7 @@
 #' @example 
 #'  load_data("data/raw/heart_disease_data.csv", 
 #'             names = c('age','sex','chest_pain_type','resting_bp','cholesterol',
-#'                        'high_blood_sugar','resting_ecg',max_heart_rate',
+#'                        'high_blood_sugar','resting_ecg','max_heart_rate',
 #'                        'exercise_pain','old_peak','slope','no_vessels_colored',
 #'                        'thal','diagnosis','diagnosis_2'),
 #'             separator = ",",
