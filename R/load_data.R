@@ -27,13 +27,17 @@
 #'              'diagnosis','diagnosis_2'))
 #' 
 
+library(readr)
+library(dplyr)
+
 load_data <- function(path, names, separator = ",", na_values = "NAs") {
   new_data <- 
-    readr:: read_delim(path, 
-                       col_names = names,
-                       delim = separator,
-                       show_col_types = FALSE,
-                       na = na_values) |>
-    dplyr::mutate_if(is.character, as.factor)
-  return(dplyr::glimpse(new_data))
+    read_delim(path, 
+               col_names = names,
+               delim = separator,
+               show_col_types = FALSE,
+               na = na_values) |>
+    mutate_if(is.character, as.factor)
+  return(glimpse(new_data))
 }
+
