@@ -16,8 +16,8 @@
 #' @export
 #'
 #' @examples
-#' abs_hist(training_set$age, "Age")
-abs_hist <- function(x_aes,  x_lab, data = training_set, fill_aes = training_set$diagnosis, y_lab = "Percentage of Observations", fill_lab = "Diagnosis") {
+#' abs_hist(training_set$age, "Age", training_set, training_set$diagnosis, "Percentage of Observations", "Diagnosis")
+abs_hist <- function(x_aes,  x_lab, data, fill_aes, y_lab, fill_lab) {
   # returns a histogram 
   histogram <- ggplot(data, aes(x = x_aes, fill = fill_aes)) + 
     geom_histogram(position="dodge") +
