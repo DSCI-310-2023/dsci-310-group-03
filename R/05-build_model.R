@@ -2,29 +2,24 @@
 #'
 #'Function build_model() to build knn model with cross validation
 #'
+#'@param training_set dataframe containing the data to train the model on
 #'@param recipe a recipe to prepare the data for modelling
 #'@param optimal a variable that takes in the string "None" or "Yes" to specify whether
 #'to use tune() for the neighbors("None" optimal yet) or use an existing number of optimal k
 #'@param k Additional numeric argument, take in an integer to indicate the number of
 #'optimal neighbors for the model
+#'@param vfold dataframe containing data splitted into folds for cross validation
+#'@param gridvals tibble containing values of k for tuning
 #'
 #'@return a fitted knn model
 #'
 #''@example build_model(image_recipe, NULL)
 #'
-#''Function get_optimal_k() to obtain the the optimal number of neighbors k
-#'@param model a fitted model, such as the return from the previous function
-#'@param print_stats a boolean to indicate whether to print the statistics of the best fit model
-#'
-#'@return an integer for the optimal number of neighbors for the knn model
-#'
-#'@example get_best_k(knn_fit)
-#'
 #'@export
 #'
 #
 
-build_model <- function(recipe, optimal, k) {
+build_model <- function(training_set, recipe, optimal, vfold, gridvals, k) {
   if(optimal=="None"){
     knn_spec <- nearest_neighbor(weight_func = "rectangular", neighbors = tune()) %>%
       set_engine("kknn") %>%
@@ -34,7 +29,7 @@ build_model <- function(recipe, optimal, k) {
       add_model(knn_spec) %>%
       tune_grid(resamples = {{vfold}}, grid={{gridvals}})%>%
       collect_metrics()
-    }
+  }
   else if (optimal == 'Yes') {
     knn_spec <- nearest_neighbor(weight_func = "rectangular", neighbors = k) %>%
       set_engine("kknn") %>%
@@ -43,20 +38,9 @@ build_model <- function(recipe, optimal, k) {
       add_recipe(recipe) %>%
       add_model(knn_spec) %>%
       fit(data = {{training_set}})
-   }
- 
+  }
+  
   
   return(knn_fit)
 }
 
-get_optimal_k <- function(model, print_stats) {
-  best_fit <- knn_fit %>%
-    filter(.metric == "accuracy") %>%
-    arrange(desc(mean)) %>% 
-    slice(1)
-  if(print_stats =="Yes"){
-  print(best_fit)
-  }
-  optimal_k <- best_fit %>% pull(neighbors)
-  return(optimal_k)
-}
