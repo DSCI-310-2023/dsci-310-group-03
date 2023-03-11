@@ -12,6 +12,7 @@ original_df <- data.frame(lunch = c("Pizza","Sushi"),
                           snack = c("Sushi","Donut"),
                           stringsAsFactors = TRUE)
 
+## Tests
 test_that("Throw an error message when any of the column or data parameter does 
           not exist",
           {# column does not exist
@@ -27,7 +28,7 @@ test_that("Return the same data frame if the original value to be replaced
 
 
 test_that("Function only replaces the values in specified column",
-          {expect_equal(expected_df, 
-             sub_values(original_df, snack, 
-                        original = 'Sushi', replacement = 'Cheetos'))})
+          {expect_equal(expected_df, sub_values(original_df, snack, 
+                                                original = 'Sushi', 
+                                                replacement = 'Cheetos'))})
 
