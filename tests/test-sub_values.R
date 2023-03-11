@@ -2,11 +2,13 @@ library(testthat)
 setwd("~/Documents/W2022/dsci-310/dsci-310-group-03/tests") 
 source("../R/sub_values.R")
 
-
 ## Set up
-expected_df <- data.frame(lunch = c("Pizza","Sushi"),
+Species_vec <- iris$Species
+
+expected_vec <- data.frame(lunch = c("Pizza", "Pizza"),
                           snack = c("Cheetos","Donut"),
-                          stringsAsFactors = TRUE)
+                          stringsAsFactors = TRUE) |>
+                          pull(snack)
 
 original_df <- data.frame(lunch = c("Pizza","Sushi"),
                           snack = c("Sushi","Donut"),
@@ -21,13 +23,17 @@ test_that("Throw an error message when any of the column or data parameter does
            # both column and data frame don't exist
            expect_error(sub_values(iris0, Species0, 'SETOSA', 'setosa'))})
 
-test_that("Return the same data frame if the original value to be replaced
+test_that("Function return a vector with the same length",
+          {expect_equal(length(Species_vec), 
+                        length(sub_values(iris, Species, 'SETOSA', 'setosa')))})
+
+test_that("Return the same vector if the original value that is being replaced
           does not exist",
-          {expect_identical(iris, sub_values(iris, Species, 'SETOSA', 'SS'))})
+          {expect_identical(Species_vec, 
+                            sub_values(iris, Species, 'SETOSA', 'SS'))})
 
-
-test_that("Function only replaces the values in specified column",
-          {expect_equal(expected_df, 
-             sub_values(original_df, snack, 
-                        original = 'Sushi', replacement = 'Cheetos'))})
+test_that("Return a vector of the specified column with the replaced value",
+          {expect_equal(expected_vec, sub_values(original_df, snack, 
+                                                original = 'Sushi', 
+                                                replacement = 'Cheetos'))})
 

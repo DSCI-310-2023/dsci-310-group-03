@@ -40,6 +40,6 @@ load_data <- function(path, names, separator = ",", na_values = "NAs") {
                na = na_values) |>
     mutate_if(is.character, as.factor)
   
-  return(glimpse(new_data))
+  return(new_data)
 }
 
