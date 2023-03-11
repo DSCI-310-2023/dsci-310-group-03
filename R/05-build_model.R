@@ -30,7 +30,7 @@ build_model <- function(training_set, recipe, optimal, vfold, gridvals, k) {
       tune_grid(resamples = {{vfold}}, grid={{gridvals}})%>%
       collect_metrics()
   }
-  else if (optimal == 'Yes') {
+  else if(optimal == 'Yes') {
     knn_spec <- nearest_neighbor(weight_func = "rectangular", neighbors = k) %>%
       set_engine("kknn") %>%
       set_mode("classification")

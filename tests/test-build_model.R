@@ -16,6 +16,9 @@ image_recipe <- recipe(Species~., data = training_set)%>%
 test_that("Model is fitted and built without error with parameter tuning",
           {expect_no_error(build_model(training_set, image_recipe, optimal = "None", vfold = vfold, gridvals = gridvals))})
 
+test_that("The output model is of the expected class type",
+          {expect_s3_class(build_model(training_set, image_recipe, optimal = "None", vfold = vfold, gridvals = gridvals), 'tbl_df')})
+
 knn_fit <- build_model(training_set, image_recipe, optimal = "None", vfold = vfold, gridvals = gridvals)
 best_fit <- knn_fit %>%
   filter(.metric == "accuracy") %>%
@@ -26,4 +29,4 @@ optimal_k <- best_fit %>% pull(neighbors)
 
 test_that("Model is fitted and built without error given optimal k neighbors",
           {expect_no_error(build_model(training_set, image_recipe,"Yes", k = optimal_k))})
-
+ 
