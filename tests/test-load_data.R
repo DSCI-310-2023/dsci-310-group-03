@@ -1,6 +1,5 @@
 library(testthat)
 library(readr)
-setwd("~/Documents/W2022/dsci-310/dsci-310-group-03/tests") 
 source("../R/load_data.R")
 
 path <- "../data/raw/heart_disease_data.csv"
