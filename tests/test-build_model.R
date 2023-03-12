@@ -1,7 +1,7 @@
 library(testthat)
 library(tidyverse)
 library(tidymodels)
-source("../R/05-build_model.R")
+source("../R/build_model.R")
 
 split_data = initial_split(iris, prop=0.75, strata=Species)
 training_set <- training(split_data)

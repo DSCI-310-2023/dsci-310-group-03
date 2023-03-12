@@ -1,18 +1,6 @@
 library(testthat)
-setwd("~/Documents/W2022/dsci-310/dsci-310-group-03/tests") 
 source("../R/sub_values.R")
-
-## Set up
-Species_vec <- iris$Species
-
-expected_vec <- data.frame(lunch = c("Pizza", "Pizza"),
-                          snack = c("Cheetos","Donut"),
-                          stringsAsFactors = TRUE) |>
-                          pull(snack)
-
-original_df <- data.frame(lunch = c("Pizza","Sushi"),
-                          snack = c("Sushi","Donut"),
-                          stringsAsFactors = TRUE)
+source("helper-sub_values.R")
 
 test_that("Throw an error message when any of the column or data parameter does 
           not exist",
