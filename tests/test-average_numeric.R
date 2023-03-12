@@ -1,5 +1,5 @@
 library(testthat)
-source("../rscript/average_numeric.R")
+source("../R/average_numeric.R")
 
 #set up
 age <- c(25, 34, 28, 52)
