@@ -4,6 +4,7 @@ library(ggplot2)
 library(devtools)
 library(testthat)
 library(vdiffr)
+source("../R/abstraction_histogram.R")
 
 cleveland <- read_delim("../data/raw/heart_disease_data.csv", 
                         col_names = c('age','sex','chest_pain_type','resting_bp','cholesterol','high_blood_sugar','resting_ecg',
@@ -24,8 +25,6 @@ cleveland_select <- select(cleveland, -diagnosis_2)
 
 split_data = initial_split(cleveland_select, prop=0.75, strata=diagnosis)
 training_set <- training(split_data)
-
-source("../R/abstraction_histogram.R")
 
 # Tests for abstraction of histogram - test if abs_hist function works
 
