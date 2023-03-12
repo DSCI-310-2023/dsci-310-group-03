@@ -1,5 +1,4 @@
 library(testthat)
-setwd("~/Documents/W2022/dsci-310/dsci-310-group-03/tests") 
 source("../R/sub_values.R")
 
 ## Set up
