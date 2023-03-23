@@ -1,7 +1,7 @@
 '
 Downloads  data from the web to a local filepath as either a csv file format.
 
-Usage: src/download_data.py --url=<url> --out_file=<out_file>
+Usage: src/download_data.r --url=<url> --out_file=<out_file>
 
 Options:
 --url=<url>              URL from where to download the data
