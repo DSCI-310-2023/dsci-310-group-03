@@ -7,6 +7,7 @@
 #' @param bins a number that indicates
 #'             the number of bins in histograms
 #' @param ncol the number of columns when arranging the plots
+#' @param sep the character that is seperating the column names
 #'
 #' @return A histogram of all numeric variables that is
 #'         grouped by the class_Column
@@ -17,6 +18,7 @@
 #' plot_hist(iris, Species, binwidth = 0.25, col = 3)
 plot_hist <- function(data,
                       class_column,
+                      sep = ".",
                       bins = 20,
                       col = 2) {
   
@@ -30,7 +32,7 @@ plot_hist <- function(data,
 
   # Create a dataframe with only numeric columns and class_column
   numeric_df <- data |>
-    dplyr::select(numeric_col, {{ class_column }}) |>
+    dplyr::select(any_of(numeric_col), {{ class_column }}) |>
     as.data.frame()
 
   # Generate a plot for each variable that is numeric
@@ -52,7 +54,10 @@ plot_hist <- function(data,
           position = "dodge"
         ) +
         ggplot2::labs(
-          x = colnames(numeric_df)[i],
+          x = gsub(sep,
+                   " ",
+                   colnames(numeric_df)[i],
+                   fixed = TRUE),
           y = "Frequency",
           fill = colnames(numeric_df)[length(numeric_df)]
         ) +
@@ -70,4 +75,3 @@ plot_hist <- function(data,
   ))
 }
 
-plot_hist(iris, Species)

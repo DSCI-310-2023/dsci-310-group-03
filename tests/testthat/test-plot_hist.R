@@ -1,6 +1,12 @@
 library(testthat)
 library(vdiffr)
-source("../../R/abstraction_histogram.R")
+source("../../R/plot_hist.R")
 
-plot_hist(iris, Species, binwidth = 0.25)
-ncol(iris)
+test_that("ggplot2 histogram works", {
+  expect_doppelganger("histograms from ggplot", 
+                      histograms_ggplot)
+  
+  histograms_function <- plot_hist(iris, Species)
+  expect_doppelganger("histograms from plot_hist",  
+                      histograms_function)  
+})

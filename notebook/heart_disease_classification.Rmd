@@ -123,7 +123,7 @@ plot_grid(numeric_plot, categorical_plot, ncol = 1)
 As the mean values do not tell us much about the numerical variables, we also plot their histograms to visualize the distribution of the variables (Figure 2). We will use this later to choose the predictors we want to use.
 ```{r}
 # Histograms for individual variables
-plot_hist(training_set, diagnosis, bins = 25, col = 3)
+plot_hist(training_set, diagnosis, sep = "_", bins = 25, col = 3)
 ```
 <span style="color: gray;">Figure 2. The distribution of value of each attribute colored by diagnosis (a) Serium Cholesterol (b) Age (c) Resting Blood Pressure (d) Max Heart Rate (e) Oldpeak (f) Number of Colored Vessels</span>
 
