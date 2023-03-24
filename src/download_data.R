@@ -9,7 +9,7 @@ Options:
 
 Example: 
 data/raw/heart_disease_data.csv: src/download_data.R
-  Rscript src/download_data.R --out_type=csv --url=https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/cleve.mod --out_file="../data/raw/heart_disease_data.csv"
+  Rscript src/download_data.R --out_type=csv --url=https://raw.githubusercontent.com/karlie-tr/dataset_heart_disease/main/heart_disease_data.csv --out_file="../data/raw/heart_disease_data.csv"
 ' -> doc
 
 library(docopt)
@@ -18,7 +18,7 @@ opt <- docopt(doc)
 
 main <- function(url, out_file) {
   # read data downloaded from the web
-  heart_disease_data <- read.csv(url, sep=" ", skip=20, header=FALSE)
+  heart_disease_data <- read.csv(url, header=FALSE)
   
   # write the data locally
   write.table(heart_disease_data, out_file, row.names = FALSE, col.names = FALSE, sep = ',')
