@@ -1,16 +1,17 @@
-'Performs data cleaning, pre-processing and transforming for data (from https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data).
+'Performs data cleaning, pre-processing and transforming for data (from https://raw.githubusercontent.com/karlie-tr/dataset_heart_disease/main/heart_disease_data.csv).
 Writes the training and test data to separate files.
 
-Usage: src/preprocess_data.r --input=<input> --out_train=<out_train> --out_test=<out_test>
+Usage: src/preprocess_data.r --input=<input> --out_train=<out_train> --out_transform_train=<out_transform_train> --out_transform_test=<out_transform_test>
   
 Options:
---input=<input>           Path (including filename) to raw data (csv file)
---out_train=<out_train>   Path to directory where the processed training data should be written
---out_test=<out_test>     Path to directory where the processed testing data should be written
+--input=<input>                              Path (including filename) to raw data (csv file)
+--out_train=<out_train>                      Path to directory where the processed training data should be written
+--out_transform_train=<out_tranform_train>   Path to directory where the processed tranformed training data should be written
+--out_transform_test=<out_transform_test>    Path to directory where the processed transformed testing data should be written
 
 Example:
 data/processed/training_set.csv data/processed/testing_set.csv: src/preprocess_data.r 
-	Rscript src/preprocess_data.r --input=../data/raw/heart_disease_data.csv --out_train=../data/processed/training_set.csv --out_test=../data/processed/testing_set.csv
+	Rscript src/preprocess_data.r --input=../data/raw/heart_disease_data.csv --out_train=../data/processed/training_set.csv --out_transform_train=../data/processed/transform_training_set.csv --out_transform_test=../data/processed/transform_testing_set.csv
 
 ' -> doc
 
@@ -65,6 +66,9 @@ main <- function(input, out_dir){
   
   training_set
   
+  # write training set to csv file
+  write_csv(training_set, out_train)
+  
   training_set <- training_set %>%
     select(-sex, -high_blood_sugar, -chest_pain_type)
   
@@ -99,9 +103,19 @@ main <- function(input, out_dir){
   training_set <- transform_numeric(training_set)
   testing_set <- transform_numeric(testing_set)
   
-  # write training data to csv files
-  write_csv(training_set, out_dir)
-  write_csv(training_set, out_dir)
+  # removing NA rows to make sure our cross-validation works
+  before <- nrow(training_set)
+  training_set <- training_set %>% na.omit()
+  after <- nrow(training_set)
+  print(paste("Removed entries:", before - after, "out of", before))
+  
+  # count sick entries
+  nr_sick <- training_set %>% filter(diagnosis == "sick") %>% nrow()
+  print(paste("Sick entries:", nr_sick, "/", nrow(training_set)))
+  
+  # write transformed training and testing set to seperated csv files
+  write_csv(training_set, out_transform_train)
+  write_csv(testing_set, out_transform_test)
 }
 
-main(opt[["--input"]], opt[["--out_train"]], opt[["--out_test"]])
+main(opt[["--input"]], opt[["--out_train"]], opt[["--out_tranform_train"]], opt[["--out_tranform_test"]])
