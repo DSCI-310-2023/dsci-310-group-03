@@ -15,7 +15,7 @@ library(tidymodels)
 library(RColorBrewer)
 library(cowplot)
 options(repr.matrix.max.rows = 6)
-options(repr.plot.width = 12, repr.plot.height = 7) 
+options(repr.plot.width = 12, repr.plot.height = 7)
 # Rscripts
 source("../R/load_data.R")
 source("../R/sub_values.R")
@@ -28,35 +28,43 @@ set.seed(1020)
 ```{r}
 # Load data file and set column names
 path <- "../data/raw/heart_disease_data.csv"
-column_names <- c("age", "sex", "chest_pain_type",
-                  "resting_bp", "cholesterol", "high_blood_sugar",
-                  "resting_ecg", "max_heart_rate", "exercise_pain",
-                  "old_peak", "slope", "no_vessels_colored",
-                  "thal", "diagnosis", "diagnosis_2")
+column_names <- c(
+  "age", "sex", "chest_pain_type",
+  "resting_bp", "cholesterol", "high_blood_sugar",
+  "resting_ecg", "max_heart_rate", "exercise_pain",
+  "old_peak", "slope", "no_vessels_colored",
+  "thal", "diagnosis", "diagnosis_2"
+)
 cleveland <- load_data(path,
-                        names = column_names,
-                        separator = ",",
-                        na_values = "?")
+  names = column_names,
+  separator = ",",
+  na_values = "?"
+)
 glimpse(cleveland)
 ```
 ```{r}
 # replace values in dataframe for readability
 high_blood_sugar_vec <-
-    sub_values(cleveland, high_blood_sugar,
-               replacement = "true", original = "TRUE")
+  sub_values(cleveland, high_blood_sugar,
+    replacement = "true", original = "TRUE"
+  )
 
 exercise_pain_vec <-
-    sub_values(cleveland, exercise_pain,
-               replacement = "true", original = "TRUE")
+  sub_values(cleveland, exercise_pain,
+    replacement = "true", original = "TRUE"
+  )
 
 diagnosis_vec <-
-    sub_values(cleveland, diagnosis,
-               replacement = "healthy", original = "buff")
+  sub_values(cleveland, diagnosis,
+    replacement = "healthy", original = "buff"
+  )
 
 cleveland <- cleveland |>
-                mutate(high_blood_sugar = high_blood_sugar_vec,
-                       exercise_pain = exercise_pain_vec,
-                       diagnosis = diagnosis_vec)
+  mutate(
+    high_blood_sugar = high_blood_sugar_vec,
+    exercise_pain = exercise_pain_vec,
+    diagnosis = diagnosis_vec
+  )
 cleveland
 ```
 <span style="color: gray;">Table 1. Parsed Cleveland data set</span>
@@ -88,33 +96,39 @@ summary_averages
 <span style="color: gray;">Table 4. Average values of the numerical attributes</span>
 ```{r}
 numeric_summary <- training_set |>
-    select(sex, chest_pain_type, high_blood_sugar,
-           resting_ecg, diagnosis) |> 
-    pivot_longer(cols = sex:resting_ecg,
-                 names_to = "attribute",
-                 values_to = "value")
+  select(
+    sex, chest_pain_type, high_blood_sugar,
+    resting_ecg, diagnosis
+  ) |>
+  pivot_longer(
+    cols = sex:resting_ecg,
+    names_to = "attribute",
+    values_to = "value"
+  )
 
 numeric_plot <- numeric_summary |>
-    ggplot() +
-    aes(y = attribute, fill = value) +
-    geom_bar(position = "fill") +
-    facet_grid(cols = vars(diagnosis)) +
-    scale_fill_brewer(palette = "Paired") +
-    labs(x = "Ratio", y = "Attribute", color = "Value")
+  ggplot() +
+  aes(y = attribute, fill = value) +
+  geom_bar(position = "fill") +
+  facet_grid(cols = vars(diagnosis)) +
+  scale_fill_brewer(palette = "Paired") +
+  labs(x = "Ratio", y = "Attribute", color = "Value")
 
 categorical_summary <- training_set |>
-    select(exercise_pain, slope, thal, diagnosis) |>
-    pivot_longer(cols = exercise_pain:thal,
-                 names_to = "attribute",
-                 values_to = "value")
+  select(exercise_pain, slope, thal, diagnosis) |>
+  pivot_longer(
+    cols = exercise_pain:thal,
+    names_to = "attribute",
+    values_to = "value"
+  )
 
 categorical_plot <- categorical_summary |>
-    ggplot() +
-    aes(y = attribute, fill = value) +
-    geom_bar(position = "fill") +
-    facet_grid(cols = vars(diagnosis)) +
-    scale_fill_brewer(palette = "Paired") +
-    labs(x = "Ratio", y = "Attribute", color = "Value")
+  ggplot() +
+  aes(y = attribute, fill = value) +
+  geom_bar(position = "fill") +
+  facet_grid(cols = vars(diagnosis)) +
+  scale_fill_brewer(palette = "Paired") +
+  labs(x = "Ratio", y = "Attribute", color = "Value")
 
 plot_grid(numeric_plot, categorical_plot, ncol = 1)
 ```
@@ -140,30 +154,27 @@ KNN does not work with non-numerical parameters, so we need to convert our facto
 ```{r}
 # Converting categorical variable to numeric data
 transform_numeric <- function(df) {
-    mutated <- mutate(
-        df,
-        
-        exercise_pain = as.character(exercise_pain),
-        exercise_pain = replace(exercise_pain, exercise_pain == "fal", "0"),
-        exercise_pain = as.numeric(replace(exercise_pain, exercise_pain == "true", "1")),
+  mutated <- mutate(
+    df,
+    exercise_pain = as.character(exercise_pain),
+    exercise_pain = replace(exercise_pain, exercise_pain == "fal", "0"),
+    exercise_pain = as.numeric(replace(exercise_pain, exercise_pain == "true", "1")),
+    slope = as.character(slope),
+    slope = replace(slope, slope == "down", "-1"),
+    slope = replace(slope, slope == "flat", "0"),
+    slope = as.numeric(replace(slope, slope == "up", "1")),
 
-        slope = as.character(slope),
-        slope = replace(slope, slope == "down", "-1"),
-        slope = replace(slope, slope == "flat", "0"),
-        slope = as.numeric(replace(slope, slope == "up", "1")),
-
-        # Below values are "non-standard" values for a better scale
-        thal = as.character(thal),
-        thal = replace(thal, thal == "rev", "4"),
-        thal = replace(thal, thal == "norm", "0"),
-        thal = as.numeric(replace(thal, thal == "fix", "5")),
-
-        resting_ecg = as.character(resting_ecg),
-        resting_ecg = replace(resting_ecg, resting_ecg == "abn", "4"),
-        resting_ecg = replace(resting_ecg, resting_ecg == "norm", "0"),
-        resting_ecg = as.numeric(replace(resting_ecg, resting_ecg == "hyp", "5")),
-    )
-    return(mutated)
+    # Below values are "non-standard" values for a better scale
+    thal = as.character(thal),
+    thal = replace(thal, thal == "rev", "4"),
+    thal = replace(thal, thal == "norm", "0"),
+    thal = as.numeric(replace(thal, thal == "fix", "5")),
+    resting_ecg = as.character(resting_ecg),
+    resting_ecg = replace(resting_ecg, resting_ecg == "abn", "4"),
+    resting_ecg = replace(resting_ecg, resting_ecg == "norm", "0"),
+    resting_ecg = as.numeric(replace(resting_ecg, resting_ecg == "hyp", "5")),
+  )
+  return(mutated)
 }
 ```
 ```{r}
@@ -196,19 +207,20 @@ vfold <- vfold_cv(training_set, v = 5, strata = diagnosis)
 gridvals <- tibble(neighbors = seq(1, 30, by = 2))
 
 image_recipe <- recipe(diagnosis ~ ., data = training_set) |>
-        step_scale(all_predictors()) |>
-        step_center(all_predictors())
+  step_scale(all_predictors()) |>
+  step_center(all_predictors())
 
 knn_fit <- build_model(training_set,
-                       image_recipe,
-                       optimal = "None",
-                       vfold = vfold,
-                       gridvals = gridvals)
+  image_recipe,
+  optimal = "None",
+  vfold = vfold,
+  gridvals = gridvals
+)
 
 best_fit <- knn_fit |>
-    filter(.metric == "accuracy") |>
-    arrange(desc(mean)) |>
-    slice(1)
+  filter(.metric == "accuracy") |>
+  arrange(desc(mean)) |>
+  slice(1)
 
 optimal_k <- best_fit |> pull(neighbors)
 
@@ -228,11 +240,11 @@ knn_fit <- build_model(training_set, image_recipe, "Yes", k = optimal_k)
 # Since the choice of which variables to include as predictors
 # is part of tuning your classifier, you cannot use your test data for this process!
 diagnosis_test_predictions <- predict(knn_fit, training_set) |>
-      bind_cols(training_set)
+  bind_cols(training_set)
 
 # pull metrics
 diagnosis_prediction_confusion <- diagnosis_test_predictions |>
-            conf_mat(truth = diagnosis, estimate = .pred_class)
+  conf_mat(truth = diagnosis, estimate = .pred_class)
 
 diagnosis_prediction_confusion
 ```
@@ -251,59 +263,67 @@ We now repeat the process described above for every subset of two predictors. We
 
 predictors <- colnames(training_set |> select(-diagnosis))
 # iterate over all pairs of predictors
-two_predictors <- tibble(formula = c("diagnosis ~ ."), k = c(optimal_k),
-                         accuracy = c(best_fit |> pull(mean)),
-                         false_healthy = c(diagnosis_prediction_confusion |>
-                                           tidy() |>
-                                           filter(name == "cell_1_2") |>
-                                           pull(value)))
+two_predictors <- tibble(
+  formula = c("diagnosis ~ ."), k = c(optimal_k),
+  accuracy = c(best_fit |> pull(mean)),
+  false_healthy = c(diagnosis_prediction_confusion |>
+    tidy() |>
+    filter(name == "cell_1_2") |>
+    pull(value))
+)
 
 for (i in 2:length(predictors)) {
-    for (j in 1:(i - 1)) {
-        model_string <- paste("diagnosis", "~",
-                              predictors[i], "+",
-                              predictors[j])
+  for (j in 1:(i - 1)) {
+    model_string <- paste(
+      "diagnosis", "~",
+      predictors[i], "+",
+      predictors[j]
+    )
 
-        print(model_string)
-        flush.console()
+    print(model_string)
+    flush.console()
 
-        # find best k
-        image_recipe <- recipe(as.formula(model_string),
-                               data = training_set) |>
-                        step_scale(all_predictors()) |>
-                        step_center(all_predictors())
+    # find best k
+    image_recipe <- recipe(as.formula(model_string),
+      data = training_set
+    ) |>
+      step_scale(all_predictors()) |>
+      step_center(all_predictors())
 
-        knn_fit <- build_model(training_set,
-                               image_recipe,
-                               "None",
-                               vfold = vfold,
-                               gridvals = gridvals)
+    knn_fit <- build_model(training_set,
+      image_recipe,
+      "None",
+      vfold = vfold,
+      gridvals = gridvals
+    )
 
-        best_fit <- knn_fit |>
-            filter(.metric == "accuracy") |>
-            arrange(desc(mean)) |>
-            slice(1)
+    best_fit <- knn_fit |>
+      filter(.metric == "accuracy") |>
+      arrange(desc(mean)) |>
+      slice(1)
 
-        optimal_k <- best_fit |> pull(neighbors)
+    optimal_k <- best_fit |> pull(neighbors)
 
-        # train
-        knn_fit <- build_model(training_set, image_recipe, "Yes", k = optimal_k)
+    # train
+    knn_fit <- build_model(training_set, image_recipe, "Yes", k = optimal_k)
 
-        predictions <- predict(knn_fit, training_set) |>
-            bind_cols(training_set)
+    predictions <- predict(knn_fit, training_set) |>
+      bind_cols(training_set)
 
-        diagnosis_prediction_confusion <- predictions |>
-            conf_mat(truth = diagnosis, estimate = .pred_class) |>
-            tidy()
+    diagnosis_prediction_confusion <- predictions |>
+      conf_mat(truth = diagnosis, estimate = .pred_class) |>
+      tidy()
 
-        two_predictors <- two_predictors |>
-            add_row(formula = model_string,
-                    k = optimal_k,
-                    accuracy = best_fit |> pull(mean),
-                    false_healthy = diagnosis_prediction_confusion |>
-                                    filter(name == "cell_1_2") |>
-                                    pull(value))
-    }
+    two_predictors <- two_predictors |>
+      add_row(
+        formula = model_string,
+        k = optimal_k,
+        accuracy = best_fit |> pull(mean),
+        false_healthy = diagnosis_prediction_confusion |>
+          filter(name == "cell_1_2") |>
+          pull(value)
+      )
+  }
 }
 
 two_predictors |> arrange(desc(accuracy))
@@ -313,17 +333,19 @@ two_predictors |> arrange(desc(accuracy))
 We also visualize the data in Figure 3. The formulas on the y axis can be read as follows: The words like `diagnosis`, `thal`, `old_peak`, etc. reference the corresponding variables; `~` can be read as “is predicted by”; `+` as “and”; and `.` as “all predictors”. Thus `diagnosis ~ .` means we take all the predictors (except the ones we excluded above, such as `sex`), and `diagnosis ~ thal + slope` means we use the two predictors thal and slope to predict the diagnosis.
 ```{r}
 plot_acc <- two_predictors |>
-    ggplot(aes(x = accuracy, y = reorder(formula, accuracy))) +
-    geom_bar(stat = "identity", fill = "#1f78b4") +
-    scale_x_continuous(labels = scales::percent,
-                       limits = c(0, 1)) +
-    labs(x = "Accuracy") +
-    theme(axis.text.y = element_blank())
+  ggplot(aes(x = accuracy, y = reorder(formula, accuracy))) +
+  geom_bar(stat = "identity", fill = "#1f78b4") +
+  scale_x_continuous(
+    labels = scales::percent,
+    limits = c(0, 1)
+  ) +
+  labs(x = "Accuracy") +
+  theme(axis.text.y = element_blank())
 
-plot_false <- two_predictors |> 
-    ggplot(aes(x = false_healthy, y = reorder(formula, accuracy))) +
-    geom_bar(stat = "identity", fill = "#a6cee3") +
-    labs(x = "False Negatives", y = "Formula")
+plot_false <- two_predictors |>
+  ggplot(aes(x = false_healthy, y = reorder(formula, accuracy))) +
+  geom_bar(stat = "identity", fill = "#a6cee3") +
+  labs(x = "False Negatives", y = "Formula")
 
 options(repr.plot.width = 12, repr.plot.height = 12)
 plot_grid(plot_false, plot_acc, ncol = 2)
@@ -337,7 +359,7 @@ We now have to select the formula we want to use.
 For this, we mostly want high accuracy. If the accuracy is comparable, we want to make sure to choose the one with fewer false negatives. As we are aiming for a simple check-up, using all predictors (`diagnosis ~ .`) is not ideal, though yielding the highest accuracy. We pick `exercise_pain + age` because it has similar false negatives while having an accuracy that is similar to when using all predictors while being attributes that are easily examined.
 ```{r}
 two_predictors |> filter(formula == "diagnosis ~ ." |
-                          formula == "diagnosis ~ exercise_pain + age")
+  formula == "diagnosis ~ exercise_pain + age")
 ```
 <span style="color: gray;">Table 8. The accuracy results for the selected formula, compared with the "all predictors" version</span>
 
@@ -349,27 +371,27 @@ clev_numeric <- transform_numeric(cleveland)
 ```
 ```{r}
 image_recipe <- recipe(diagnosis ~ exercise_pain + age, data = training_set) |>
-        step_scale(all_predictors()) |>
-        step_center(all_predictors())
+  step_scale(all_predictors()) |>
+  step_center(all_predictors())
 
 knn_spec <- nearest_neighbor(weight_func = "rectangular", neighbors = 11) |>
-       set_engine("kknn") |>
-       set_mode("classification")
+  set_engine("kknn") |>
+  set_mode("classification")
 
 knn_fit <- workflow() |>
-       add_recipe(image_recipe) |>
-       add_model(knn_spec) |>
-       fit(data=training_set)
+  add_recipe(image_recipe) |>
+  add_model(knn_spec) |>
+  fit(data = training_set)
 ```
 ```{r}
 testing_set <- testing_set |> na.omit()
 
 predictions <- predict(knn_fit, testing_set) |>
-    bind_cols(testing_set)
+  bind_cols(testing_set)
 
 final_quality <- predictions |>
-    metrics(truth = diagnosis, estimate = .pred_class) |> 
-    filter(.metric == "accuracy")
+  metrics(truth = diagnosis, estimate = .pred_class) |>
+  filter(.metric == "accuracy")
 
 predictions |> conf_mat(truth = diagnosis, estimate = .pred_class)
 
@@ -382,26 +404,30 @@ Overall, the accuracy for our model is 68%, which is much lower than expected. T
 Using this version, the rate for diagnosing sick patients as healthy is ~34%. This means that 3 out of 10 cases of heart disease are misdiagnosed. However, as this is a simple method for doctors to use as a signal to further monitor patients for risk of developing disease, the accuracy for this version may be acceptable.
 We can also plot the whole data set and the areas where new data points will be classified as sick or healthy (Figure 4).
 ```{r}
-options(repr.plot.width = 12, repr.plot.height = 7) 
+options(repr.plot.width = 12, repr.plot.height = 7)
 
 # create the grid of area/smoothness vals, and arrange in a data frame
 # Code taken and adapted from https://datasciencebook.ca/classification.html#fig:05-upsample-plot
 x_grid <- seq(min(clev_numeric$exercise_pain, na.rm = TRUE),
-                max(clev_numeric$exercise_pain, na.rm = TRUE),
-                length.out = 100)
+  max(clev_numeric$exercise_pain, na.rm = TRUE),
+  length.out = 100
+)
 
 y_grid <- seq(min(clev_numeric$age),
-                max(clev_numeric$age),
-                length.out = 100)
+  max(clev_numeric$age),
+  length.out = 100
+)
 
-ex_age_grid <- as_tibble(expand.grid(exercise_pain = x_grid,
-                                age = y_grid))
+ex_age_grid <- as_tibble(expand.grid(
+  exercise_pain = x_grid,
+  age = y_grid
+))
 
 # use the fit workflow to make predictions at the grid points
 knn_pred <- predict(knn_fit, ex_age_grid)
 
 # bind the predictions as a new column with the grid points
-prediction_table <- bind_cols(knn_pred, ex_age_grid) |> 
+prediction_table <- bind_cols(knn_pred, ex_age_grid) |>
   rename(Class = .pred_class)
 
 # plot:
@@ -409,22 +435,34 @@ prediction_table <- bind_cols(knn_pred, ex_age_grid) |>
 # 2. the faded colored scatter for the grid points
 wkflw_plot <-
   ggplot() +
-  geom_point(data = clev_numeric, 
-             mapping = aes(x = exercise_pain, 
-                           y = age, 
-                           color = diagnosis), 
-             alpha = 0.75) +
-  geom_point(data = prediction_table, 
-             mapping = aes(x = exercise_pain, 
-                           y = age, 
-                           color = Class), 
-             alpha = 0.02, 
-             size = 10) +
-  labs(color = "Diagnosis", 
-       x = "Excercise Pain", 
-       y = "Age (years)") +
-  scale_color_manual(labels = c("Healthy", "Sick"), 
-                     values = c("steelblue2", "orange2")) +
+  geom_point(
+    data = clev_numeric,
+    mapping = aes(
+      x = exercise_pain,
+      y = age,
+      color = diagnosis
+    ),
+    alpha = 0.75
+  ) +
+  geom_point(
+    data = prediction_table,
+    mapping = aes(
+      x = exercise_pain,
+      y = age,
+      color = Class
+    ),
+    alpha = 0.02,
+    size = 10
+  ) +
+  labs(
+    color = "Diagnosis",
+    x = "Excercise Pain",
+    y = "Age (years)"
+  ) +
+  scale_color_manual(
+    labels = c("Healthy", "Sick"),
+    values = c("steelblue2", "orange2")
+  ) +
   theme(text = element_text(size = 12))
 
 wkflw_plot
