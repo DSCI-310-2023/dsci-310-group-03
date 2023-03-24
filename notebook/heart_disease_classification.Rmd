@@ -20,7 +20,7 @@ options(repr.plot.width = 12, repr.plot.height = 7)
 source("../R/load_data.R")
 source("../R/sub_values.R")
 source("../R/average_numeric.R")
-source("../R/abstraction_histogram.R")
+source("../R/plot_hist.R")
 source("../R/build_model.R")
 # set seed to make sure our file is reproducible
 set.seed(1020)
@@ -53,7 +53,7 @@ diagnosis_vec <-
     sub_values(cleveland, diagnosis,
                replacement = "healthy", original = "buff")
 
-cleveland <- cleveland %>%
+cleveland <- cleveland |>
                 mutate(high_blood_sugar = high_blood_sugar_vec,
                        exercise_pain = exercise_pain_vec,
                        diagnosis = diagnosis_vec)
@@ -87,14 +87,14 @@ summary_averages
 ```
 <span style="color: gray;">Table 4. Average values of the numerical attributes</span>
 ```{r}
-numeric_summary <- training_set %>%
+numeric_summary <- training_set |>
     select(sex, chest_pain_type, high_blood_sugar,
-           resting_ecg, diagnosis) %>% 
+           resting_ecg, diagnosis) |> 
     pivot_longer(cols = sex:resting_ecg,
                  names_to = "attribute",
                  values_to = "value")
 
-numeric_plot <- numeric_summary %>%
+numeric_plot <- numeric_summary |>
     ggplot() +
     aes(y = attribute, fill = value) +
     geom_bar(position = "fill") +
@@ -102,13 +102,13 @@ numeric_plot <- numeric_summary %>%
     scale_fill_brewer(palette = "Paired") +
     labs(x = "Ratio", y = "Attribute", color = "Value")
 
-categorical_summary <- training_set %>%
-    select(exercise_pain, slope, thal, diagnosis) %>%
+categorical_summary <- training_set |>
+    select(exercise_pain, slope, thal, diagnosis) |>
     pivot_longer(cols = exercise_pain:thal,
                  names_to = "attribute",
                  values_to = "value")
 
-categorical_plot <- categorical_summary %>%
+categorical_plot <- categorical_summary |>
     ggplot() +
     aes(y = attribute, fill = value) +
     geom_bar(position = "fill") +
@@ -123,40 +123,7 @@ plot_grid(numeric_plot, categorical_plot, ncol = 1)
 As the mean values do not tell us much about the numerical variables, we also plot their histograms to visualize the distribution of the variables (Figure 2). We will use this later to choose the predictors we want to use.
 ```{r}
 # Histograms for individual variables
-cholesterol_histogram <-
-    abs_hist(training_set$cholesterol, "Serum Cholesterol (mg/dl)",
-             training_set, training_set$diagnosis,
-             "Percentage of Observations", "Diagnosis")
-
-age_histogram <-
-    abs_hist(training_set$age, "Age", 
-             training_set, training_set$diagnosis,
-             "Percentage of Observations", "Diagnosis")
-
-resting_bp_histogram <-
-    abs_hist(training_set$resting_bp, "Resting Blood Pressure(mm Hg)",
-             training_set, training_set$diagnosis,
-             "Percentage of Observations", "Diagnosis")
-
-max_heart_rate_histogram <-
-    abs_hist(training_set$max_heart_rate, "Max Heart Rate(Beats/min)",
-             training_set, training_set$diagnosis,
-             "Percentage of Observations", "Diagnosis")
-
-old_peak_histogram <- 
-    abs_hist(training_set$old_peak, "Oldpeak",
-             training_set, training_set$diagnosis,
-             "Percentage of Observations", "Diagnosis")
-
-no_vessels_colored_histogram <- 
-    abs_hist(training_set$no_vessels_colored, "Number of colored vessels",
-             training_set, training_set$diagnosis,
-             "Percentage of Observations", "Diagnosis")
-
-options(repr.plot.width = 16, repr.plot.height = 6) 
-plot_grid(cholesterol_histogram, age_histogram,
-          resting_bp_histogram, max_heart_rate_histogram,
-          old_peak_histogram, no_vessels_colored_histogram, ncol = 3)
+plot_hist(training_set, diagnosis, sep = "_", bins = 25, col = 3)
 ```
 <span style="color: gray;">Figure 2. The distribution of value of each attribute colored by diagnosis (a) Serium Cholesterol (b) Age (c) Resting Blood Pressure (d) Max Heart Rate (e) Oldpeak (f) Number of Colored Vessels</span>
 
@@ -166,7 +133,7 @@ We will use the k-nearest neighbor (KNN) algorithm for our data analysis (Timber
 Our goal is to find the two best predictors for a KNN classification. However, taking all variables into account takes too long, so we exclude some, based on the exploration above:
 Based on Figure 1, `high blood sugar` did not show a significant increase between sick and healthy subjects. `Chest pain type` was removed from further analysis due to the initial study lacking documentation, as well as inconsistencies in the academic community for the terms and methods used to describe and categorize the types of chest pain. The academic community typically refers to only four types of angina: stable angina, unstable angina, microvascular angina, and vasospastic/variant angina (National Heart, Lung, and Blood Association, 2022). Therefore, it was challenging finding resources that properly described what abnormal angina was, as referenced in the original study. Additionally, `sex` as a predictor was excluded, as treating sex as binary is a topic we do not want to make a statement on.
 ```{r}
-training_set <- training_set %>%
+training_set <- training_set |>
     select(-sex, -high_blood_sugar, -chest_pain_type)
 ```
 KNN does not work with non-numerical parameters, so we need to convert our factorial parameters to numerical values. `Exercise pain` is a binary variable, so we convert it to 0 if no exercise pain was reported, and 1 otherwise. `Slope` can be easily replaced with  -1 for “down”, 0 for “flat”, or 1 for “up”. For better scaling of the parameters, `thal` and `resting ECG` values were replaced with non-standard numeric values; Normal was replaced with 0 and the non-normal values (i.e., symptomatic results) were either replaced with  4 or 5. We decided to use these values to represent that the abnormal states are versions of the same broader category.
@@ -207,7 +174,7 @@ To optimize the model, we need to ensure that there are no ‘Not-a-Number’ va
 ```{r}
 # removing NA rows to make sure our cross-validation works
 before <- nrow(training_set)
-training_set <- training_set %>% na.omit()
+training_set <- training_set |> na.omit()
 after <- nrow(training_set)
 print(paste("Removed entries:", before - after, "out of", before))
 ```
@@ -216,7 +183,7 @@ To get a better grasp of the data set and be able to understand the following me
 We can see that roughly 46% of our data points are sick. KNN sometimes struggles if the different classes are not balanced. Since this is not the case here, we do not need to artificially balance the classes (for example with oversampling).
 ```{r}
 # count sick entries
-nr_sick <- training_set %>% filter(diagnosis == "sick") %>% nrow()
+nr_sick <- training_set |> filter(diagnosis == "sick") |> nrow()
 print(paste("Sick entries:", nr_sick, "/", nrow(training_set)))
 ```
 Despite aiming for two predictors, we first want to build and optimize a model for all the predictors that have not been excluded so far. This allows us to have a reference for our two-predictor-models and lets us verify our model building.
@@ -228,8 +195,8 @@ As noted above, KNN needs data where the euclidean distances describe the simila
 vfold <- vfold_cv(training_set, v = 5, strata = diagnosis)
 gridvals <- tibble(neighbors = seq(1, 30, by = 2))
 
-image_recipe <- recipe(diagnosis ~ ., data = training_set) %>%
-        step_scale(all_predictors()) %>%
+image_recipe <- recipe(diagnosis ~ ., data = training_set) |>
+        step_scale(all_predictors()) |>
         step_center(all_predictors())
 
 knn_fit <- build_model(training_set,
@@ -238,12 +205,12 @@ knn_fit <- build_model(training_set,
                        vfold = vfold,
                        gridvals = gridvals)
 
-best_fit <- knn_fit %>%
-    filter(.metric == "accuracy") %>%
-    arrange(desc(mean)) %>%
+best_fit <- knn_fit |>
+    filter(.metric == "accuracy") |>
+    arrange(desc(mean)) |>
     slice(1)
 
-optimal_k <- best_fit %>% pull(neighbors)
+optimal_k <- best_fit |> pull(neighbors)
 
 best_fit
 ```
@@ -260,11 +227,11 @@ knn_fit <- build_model(training_set, image_recipe, "Yes", k = optimal_k)
 # predicting the whole training set to get an idea of the accuracy
 # Since the choice of which variables to include as predictors
 # is part of tuning your classifier, you cannot use your test data for this process!
-diagnosis_test_predictions <- predict(knn_fit, training_set) %>%
+diagnosis_test_predictions <- predict(knn_fit, training_set) |>
       bind_cols(training_set)
 
 # pull metrics
-diagnosis_prediction_confusion <- diagnosis_test_predictions %>%
+diagnosis_prediction_confusion <- diagnosis_test_predictions |>
             conf_mat(truth = diagnosis, estimate = .pred_class)
 
 diagnosis_prediction_confusion
@@ -282,13 +249,13 @@ We now repeat the process described above for every subset of two predictors. We
 # please do not interrupt the kernel and just let it take it's time
 ### WARNING ###
 
-predictors <- colnames(training_set %>% select(-diagnosis))
+predictors <- colnames(training_set |> select(-diagnosis))
 # iterate over all pairs of predictors
 two_predictors <- tibble(formula = c("diagnosis ~ ."), k = c(optimal_k),
-                         accuracy = c(best_fit %>% pull(mean)),
-                         false_healthy = c(diagnosis_prediction_confusion %>%
-                                           tidy() %>%
-                                           filter(name == "cell_1_2") %>%
+                         accuracy = c(best_fit |> pull(mean)),
+                         false_healthy = c(diagnosis_prediction_confusion |>
+                                           tidy() |>
+                                           filter(name == "cell_1_2") |>
                                            pull(value)))
 
 for (i in 2:length(predictors)) {
@@ -302,8 +269,8 @@ for (i in 2:length(predictors)) {
 
         # find best k
         image_recipe <- recipe(as.formula(model_string),
-                               data = training_set) %>%
-                        step_scale(all_predictors()) %>%
+                               data = training_set) |>
+                        step_scale(all_predictors()) |>
                         step_center(all_predictors())
 
         knn_fit <- build_model(training_set,
@@ -312,40 +279,40 @@ for (i in 2:length(predictors)) {
                                vfold = vfold,
                                gridvals = gridvals)
 
-        best_fit <- knn_fit %>%
-            filter(.metric == "accuracy") %>%
-            arrange(desc(mean)) %>%
+        best_fit <- knn_fit |>
+            filter(.metric == "accuracy") |>
+            arrange(desc(mean)) |>
             slice(1)
 
-        optimal_k <- best_fit %>% pull(neighbors)
+        optimal_k <- best_fit |> pull(neighbors)
 
         # train
         knn_fit <- build_model(training_set, image_recipe, "Yes", k = optimal_k)
 
-        predictions <- predict(knn_fit, training_set) %>%
+        predictions <- predict(knn_fit, training_set) |>
             bind_cols(training_set)
 
-        diagnosis_prediction_confusion <- predictions %>%
-            conf_mat(truth = diagnosis, estimate = .pred_class) %>%
+        diagnosis_prediction_confusion <- predictions |>
+            conf_mat(truth = diagnosis, estimate = .pred_class) |>
             tidy()
 
-        two_predictors <- two_predictors %>%
+        two_predictors <- two_predictors |>
             add_row(formula = model_string,
                     k = optimal_k,
-                    accuracy = best_fit %>% pull(mean),
-                    false_healthy = diagnosis_prediction_confusion %>%
-                                    filter(name == "cell_1_2") %>%
+                    accuracy = best_fit |> pull(mean),
+                    false_healthy = diagnosis_prediction_confusion |>
+                                    filter(name == "cell_1_2") |>
                                     pull(value))
     }
 }
 
-two_predictors %>% arrange(desc(accuracy))
+two_predictors |> arrange(desc(accuracy))
 ```
 <span style="color: gray;">Table 7. The accuracy results for all tried formulas</span>
 
 We also visualize the data in Figure 3. The formulas on the y axis can be read as follows: The words like `diagnosis`, `thal`, `old_peak`, etc. reference the corresponding variables; `~` can be read as “is predicted by”; `+` as “and”; and `.` as “all predictors”. Thus `diagnosis ~ .` means we take all the predictors (except the ones we excluded above, such as `sex`), and `diagnosis ~ thal + slope` means we use the two predictors thal and slope to predict the diagnosis.
 ```{r}
-plot_acc <- two_predictors %>%
+plot_acc <- two_predictors |>
     ggplot(aes(x = accuracy, y = reorder(formula, accuracy))) +
     geom_bar(stat = "identity", fill = "#1f78b4") +
     scale_x_continuous(labels = scales::percent,
@@ -353,7 +320,7 @@ plot_acc <- two_predictors %>%
     labs(x = "Accuracy") +
     theme(axis.text.y = element_blank())
 
-plot_false <- two_predictors %>% 
+plot_false <- two_predictors |> 
     ggplot(aes(x = false_healthy, y = reorder(formula, accuracy))) +
     geom_bar(stat = "identity", fill = "#a6cee3") +
     labs(x = "False Negatives", y = "Formula")
@@ -369,7 +336,7 @@ We now have to select the formula we want to use.
 
 For this, we mostly want high accuracy. If the accuracy is comparable, we want to make sure to choose the one with fewer false negatives. As we are aiming for a simple check-up, using all predictors (`diagnosis ~ .`) is not ideal, though yielding the highest accuracy. We pick `exercise_pain + age` because it has similar false negatives while having an accuracy that is similar to when using all predictors while being attributes that are easily examined.
 ```{r}
-two_predictors %>% filter(formula == "diagnosis ~ ." |
+two_predictors |> filter(formula == "diagnosis ~ ." |
                           formula == "diagnosis ~ exercise_pain + age")
 ```
 <span style="color: gray;">Table 8. The accuracy results for the selected formula, compared with the "all predictors" version</span>
@@ -381,30 +348,30 @@ We can now verify the model on the testing data.
 clev_numeric <- transform_numeric(cleveland)
 ```
 ```{r}
-image_recipe <- recipe(diagnosis ~ exercise_pain + age, data = training_set) %>%
-        step_scale(all_predictors()) %>%
+image_recipe <- recipe(diagnosis ~ exercise_pain + age, data = training_set) |>
+        step_scale(all_predictors()) |>
         step_center(all_predictors())
 
-knn_spec <- nearest_neighbor(weight_func = "rectangular", neighbors = 11) %>%
-       set_engine("kknn") %>%
+knn_spec <- nearest_neighbor(weight_func = "rectangular", neighbors = 11) |>
+       set_engine("kknn") |>
        set_mode("classification")
 
-knn_fit <- workflow() %>%
-       add_recipe(image_recipe) %>%
-       add_model(knn_spec) %>%
+knn_fit <- workflow() |>
+       add_recipe(image_recipe) |>
+       add_model(knn_spec) |>
        fit(data=training_set)
 ```
 ```{r}
-testing_set <- testing_set %>% na.omit()
+testing_set <- testing_set |> na.omit()
 
-predictions <- predict(knn_fit, testing_set) %>%
+predictions <- predict(knn_fit, testing_set) |>
     bind_cols(testing_set)
 
-final_quality <- predictions %>%
-    metrics(truth = diagnosis, estimate = .pred_class) %>% 
+final_quality <- predictions |>
+    metrics(truth = diagnosis, estimate = .pred_class) |> 
     filter(.metric == "accuracy")
 
-predictions %>% conf_mat(truth = diagnosis, estimate = .pred_class)
+predictions |> conf_mat(truth = diagnosis, estimate = .pred_class)
 
 final_quality
 ```
@@ -434,7 +401,7 @@ ex_age_grid <- as_tibble(expand.grid(exercise_pain = x_grid,
 knn_pred <- predict(knn_fit, ex_age_grid)
 
 # bind the predictions as a new column with the grid points
-prediction_table <- bind_cols(knn_pred, ex_age_grid) %>% 
+prediction_table <- bind_cols(knn_pred, ex_age_grid) |> 
   rename(Class = .pred_class)
 
 # plot:
