@@ -20,7 +20,7 @@ options(repr.plot.width = 12, repr.plot.height = 7)
 source("../R/load_data.R")
 source("../R/sub_values.R")
 source("../R/average_numeric.R")
-source("../R/abstraction_histogram.R")
+source("../R/plot_hist.R")
 source("../R/build_model.R")
 # set seed to make sure our file is reproducible
 set.seed(1020)
@@ -123,40 +123,7 @@ plot_grid(numeric_plot, categorical_plot, ncol = 1)
 As the mean values do not tell us much about the numerical variables, we also plot their histograms to visualize the distribution of the variables (Figure 2). We will use this later to choose the predictors we want to use.
 ```{r}
 # Histograms for individual variables
-cholesterol_histogram <-
-    abs_hist(training_set$cholesterol, "Serum Cholesterol (mg/dl)",
-             training_set, training_set$diagnosis,
-             "Percentage of Observations", "Diagnosis")
-
-age_histogram <-
-    abs_hist(training_set$age, "Age", 
-             training_set, training_set$diagnosis,
-             "Percentage of Observations", "Diagnosis")
-
-resting_bp_histogram <-
-    abs_hist(training_set$resting_bp, "Resting Blood Pressure(mm Hg)",
-             training_set, training_set$diagnosis,
-             "Percentage of Observations", "Diagnosis")
-
-max_heart_rate_histogram <-
-    abs_hist(training_set$max_heart_rate, "Max Heart Rate(Beats/min)",
-             training_set, training_set$diagnosis,
-             "Percentage of Observations", "Diagnosis")
-
-old_peak_histogram <- 
-    abs_hist(training_set$old_peak, "Oldpeak",
-             training_set, training_set$diagnosis,
-             "Percentage of Observations", "Diagnosis")
-
-no_vessels_colored_histogram <- 
-    abs_hist(training_set$no_vessels_colored, "Number of colored vessels",
-             training_set, training_set$diagnosis,
-             "Percentage of Observations", "Diagnosis")
-
-options(repr.plot.width = 16, repr.plot.height = 6) 
-plot_grid(cholesterol_histogram, age_histogram,
-          resting_bp_histogram, max_heart_rate_histogram,
-          old_peak_histogram, no_vessels_colored_histogram, ncol = 3)
+plot_hist(cleveland_select, diagnosis, binwidth = 20, col = 3)
 ```
 <span style="color: gray;">Figure 2. The distribution of value of each attribute colored by diagnosis (a) Serium Cholesterol (b) Age (c) Resting Blood Pressure (d) Max Heart Rate (e) Oldpeak (f) Number of Colored Vessels</span>
 
