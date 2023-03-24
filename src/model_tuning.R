@@ -2,12 +2,13 @@
 as well as the best fit results. Additionally perform feature selection and output results for diferent 
 combinations of predictors.
 
+A transformed testing set with similar transformation as the training, output as 'transformed_testing_set.csv'
 The best fit result from cross validation is saved as 'cv_best_fit.csv'
 The diagnosis prediction confusion matrix is saved as 'diagnosis_prediction_confusion.csv'
 The results for different tried formulas is saved as 'model_formulas_result.csv'
 The plot for predictors results is saved as 'predictors_result.png'
 
-Usage: src/model_tuning.R --input=<input> --out_dir=<out_dir>
+Usage: src/model_tuning.R --input_dir=<input_dir> --out_dir=<out_dir>
 " -> doc
 
 library(tidymodels)
@@ -18,7 +19,8 @@ set.seed(1020)
 
 opt <- docopt(doc)
 
-training_set <- read.csv(opt$input)
+training_set <- read.csv(paste0(opt$input_dir,'/training_set.csv'))
+testing_set <- read.csv(paste0(opt$input_dir,'/testing_set.csv'))
 
 training_set <- training_set %>%
   select(-sex, -high_blood_sugar, -chest_pain_type)
@@ -52,6 +54,13 @@ transform_numeric <- function(df) {
 }
 
 training_set <- transform_numeric(training_set)
+testing_set <- transform_numeric(testing_set)
+
+write.csv(testing_set, paste0(opt$out_dir,"/transformed_testing_set.csv"))
+
+before <- nrow(training_set)
+training_set <- training_set %>% na.omit()
+after <- nrow(training_set)
 
 # Perform cross validation to find optimal k
 vfold <- vfold_cv(training_set, v = 5, strata = diagnosis)
