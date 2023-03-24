@@ -10,7 +10,7 @@ Options:
 
 Example:
 data/processed/training_set.csv data/processed/testing_set.csv: src/preprocess_data.r 
-	Rscript src/preprocess_data.r --input="../data/raw/heart_disease_data.csv" --out_train="../data/processed/training_set.csv" --out_test="../data/processed/testing_set.csv"
+	Rscript src/preprocess_data.r --input=../data/raw/heart_disease_data.csv --out_train=../data/processed/training_set.csv --out_test=../data/processed/testing_set.csv
 
 ' -> doc
 
