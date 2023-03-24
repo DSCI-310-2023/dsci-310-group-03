@@ -1,31 +1,30 @@
-# load libraries
-library(tidyverse)
-library(repr)
-library(tidymodels)
-library(RColorBrewer)
-library(cowplot)
-options(repr.matrix.max.rows = 6)
-options(repr.plot.width = 12, repr.plot.height = 7) 
-# Rscripts
+"
+Usage: src/exploratory_visualization.R --input=<input> --out_dir=<out_dir>
+Options:
+--input_dir=<input_dir>		Path (including filename) to raw data
+--out_dir=<output_dir>		Path to directory where the results should be saved
+  " -> doc
 
 source("../R/average_numeric.R")
 source("../R/abstraction_histogram.R")
+options(repr.matrix.max.rows = 6)
+options(repr.plot.width = 12, repr.plot.height = 7) 
 
+opt <- docopt(doc)
 
-source("./R/preprocess_data.R")
 
 # Average values of the numerical attributes
 summary_averages <- avg_numeric(training_set, diagnosis)
 summary_averages
 
-numeric_summary <- training_set %>%
-  select(sex, chest_pain_type, high_blood_sugar,
-         resting_ecg, diagnosis) %>% 
+numeric_summary <- training_set |>
+  dplyr::select(sex, chest_pain_type, high_blood_sugar,
+         resting_ecg, diagnosis) |> 
   pivot_longer(cols = sex:resting_ecg,
                names_to = "attribute",
                values_to = "value")
 
-numeric_plot <- numeric_summary %>%
+numeric_plot <- numeric_summary |>
   ggplot() +
   aes(y = attribute, fill = value) +
   geom_bar(position = "fill") +
@@ -33,13 +32,13 @@ numeric_plot <- numeric_summary %>%
   scale_fill_brewer(palette = "Paired") +
   labs(x = "Ratio", y = "Attribute", color = "Value")
 
-categorical_summary <- training_set %>%
-  select(exercise_pain, slope, thal, diagnosis) %>%
+categorical_summary <- training_set |>
+  dplyr::select(exercise_pain, slope, thal, diagnosis) |>
   pivot_longer(cols = exercise_pain:thal,
                names_to = "attribute",
                values_to = "value")
 
-categorical_plot <- categorical_summary %>%
+categorical_plot <- categorical_summary |>
   ggplot() +
   aes(y = attribute, fill = value) +
   geom_bar(position = "fill") +
@@ -84,48 +83,3 @@ options(repr.plot.width = 16, repr.plot.height = 6)
 plot_grid(cholesterol_histogram, age_histogram,
           resting_bp_histogram, max_heart_rate_histogram,
           old_peak_histogram, no_vessels_colored_histogram, ncol = 3)
-
-training_set <- training_set %>%
-  select(-sex, -high_blood_sugar, -chest_pain_type)
-
-# Converting categorical variable to numeric data
-transform_numeric <- function(df) {
-  mutated <- mutate(
-    df,
-    
-    exercise_pain = as.character(exercise_pain),
-    exercise_pain = replace(exercise_pain, exercise_pain == "fal", "0"),
-    exercise_pain = as.numeric(replace(exercise_pain, exercise_pain == "true", "1")),
-    
-    slope = as.character(slope),
-    slope = replace(slope, slope == "down", "-1"),
-    slope = replace(slope, slope == "flat", "0"),
-    slope = as.numeric(replace(slope, slope == "up", "1")),
-    
-    # Below values are "non-standard" values for a better scale
-    thal = as.character(thal),
-    thal = replace(thal, thal == "rev", "4"),
-    thal = replace(thal, thal == "norm", "0"),
-    thal = as.numeric(replace(thal, thal == "fix", "5")),
-    
-    resting_ecg = as.character(resting_ecg),
-    resting_ecg = replace(resting_ecg, resting_ecg == "abn", "4"),
-    resting_ecg = replace(resting_ecg, resting_ecg == "norm", "0"),
-    resting_ecg = as.numeric(replace(resting_ecg, resting_ecg == "hyp", "5")),
-  )
-  return(mutated)
-}
-
-training_set <- transform_numeric(training_set)
-testing_set <- transform_numeric(testing_set)
-
-# removing NA rows to make sure our cross-validation works
-before <- nrow(training_set)
-training_set <- training_set %>% na.omit()
-after <- nrow(training_set)
-print(paste("Removed entries:", before - after, "out of", before))
-
-# count sick entries
-nr_sick <- training_set %>% filter(diagnosis == "sick") %>% nrow()
-print(paste("Sick entries:", nr_sick, "/", nrow(training_set)))
-
