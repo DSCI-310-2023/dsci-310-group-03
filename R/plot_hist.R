@@ -54,7 +54,7 @@ plot_hist <- function(data,
         ggplot2::labs(
           x = colnames(numeric_df)[i],
           y = "Frequency",
-          fill = names(categories)
+          fill = colnames(numeric_df)[length(numeric_df)]
         ) +
         ggplot2::theme(text = ggplot2::element_text(size = 10)) +
         ggplot2::scale_fill_brewer(palette = "Paired")
@@ -69,3 +69,5 @@ plot_hist <- function(data,
     label_size = 10
   ))
 }
+
+plot_hist(iris, Species)
