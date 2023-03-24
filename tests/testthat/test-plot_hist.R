@@ -1,5 +1,6 @@
 library(testthat)
 library(vdiffr)
-source("../R/abstraction_histogram.R")
+source("../../R/abstraction_histogram.R")
 
-ggplot_1 <- abt_hist()
+plot_hist(iris, Species, binwidth = 0.25)
+ncol(iris)

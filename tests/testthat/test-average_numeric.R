@@ -1,7 +1,11 @@
 source("../../R/average_numeric.R")
 
-testthat::test_that("Return the summary table of mean grouped by income status",
-          {testthat::expect_equal(expected, 
-                                  avg_numeric(incomedata,status))})
+iris_avg <- iris |>
+  group_by(Species) |>
+  summarize_all(mean, na = TRUE)
+
+testthat::test_that("Return the summary table of mean grouped by Species",
+          {testthat::expect_equal(iris_avg, 
+                                  avg_numeric(iris, Species))})
 
 

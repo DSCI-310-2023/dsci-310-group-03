@@ -4,7 +4,7 @@ status <- c("Poor", "Improved", "Excellent", "Poor")
 incomedata <- data.frame(age, status)
 
 # Expected result -------------------------------------------------------------
-expected<- dplyr::tribble(
+expected <- dplyr::tribble(
   ~status, ~age,
   "Excellent", 28,
   "Improved", 34,
