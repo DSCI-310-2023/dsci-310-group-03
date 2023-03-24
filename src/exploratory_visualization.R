@@ -12,7 +12,7 @@ source("../R/average_numeric.R")
 source("../R/abstraction_histogram.R")
 
 
-source("./R/knn_model_script.R")
+source("./R/preprocess_data.R")
 
 # Average values of the numerical attributes
 summary_averages <- avg_numeric(training_set, diagnosis)
