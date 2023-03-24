@@ -9,7 +9,7 @@ Options:
 
 Example: 
 data/raw/heart_disease_data.csv: src/download_data.R
-  Rscript src/download_data.R --out_type=csv --url=https://raw.githubusercontent.com/karlie-tr/dataset_heart_disease/main/heart_disease_data.csv --out_file="../data/raw/heart_disease_data.csv"
+  Rscript src/download_data.R --url=https://raw.githubusercontent.com/karlie-tr/dataset_heart_disease/main/heart_disease_data.csv --out_file="../data/raw/heart_disease_data.csv"
 ' -> doc
 
 library(docopt)
