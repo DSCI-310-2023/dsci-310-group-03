@@ -1,7 +1,57 @@
+"Fits knn model on the training set with cross validation and return the optimal number of neighbors k
+as well as the best fit results. Additionally perform feature selection and output results for diferent 
+combinations of predictors.
+
+The best fit result from cross validation is saved as 'cv_best_fit.csv'
+The diagnosis prediction confusion matrix is saved as 'diagnosis_prediction_confusion.csv'
+The results for different tried formulas is saved as 'model_formulas_result.csv'
+The plot for predictors results is saved as 'predictors_result.png'
+
+Usage: src/model_tuning.R --input=<input> --out_dir=<out_dir>
+" -> doc
+
 library(tidymodels)
 library(tidyverse)
+library(here)
+source(here("R/build_model.R"))
+set.seed(1020)
 
-source("./R/build_model.R")
+opt <- docopt(doc)
+
+training_set <- read.csv(opt$input)
+
+training_set <- training_set %>%
+  select(-sex, -high_blood_sugar, -chest_pain_type)
+
+# Converting categorical variable to numeric data
+transform_numeric <- function(df) {
+  mutated <- mutate(
+    df,
+    
+    exercise_pain = as.character(exercise_pain),
+    exercise_pain = replace(exercise_pain, exercise_pain == "fal", "0"),
+    exercise_pain = as.numeric(replace(exercise_pain, exercise_pain == "true", "1")),
+    
+    slope = as.character(slope),
+    slope = replace(slope, slope == "down", "-1"),
+    slope = replace(slope, slope == "flat", "0"),
+    slope = as.numeric(replace(slope, slope == "up", "1")),
+    
+    # Below values are "non-standard" values for a better scale
+    thal = as.character(thal),
+    thal = replace(thal, thal == "rev", "4"),
+    thal = replace(thal, thal == "norm", "0"),
+    thal = as.numeric(replace(thal, thal == "fix", "5")),
+    
+    resting_ecg = as.character(resting_ecg),
+    resting_ecg = replace(resting_ecg, resting_ecg == "abn", "4"),
+    resting_ecg = replace(resting_ecg, resting_ecg == "norm", "0"),
+    resting_ecg = as.numeric(replace(resting_ecg, resting_ecg == "hyp", "5")),
+  )
+  return(mutated)
+}
+
+training_set <- transform_numeric(training_set)
 
 # Perform cross validation to find optimal k
 vfold <- vfold_cv(training_set, v = 5, strata = diagnosis)
@@ -24,8 +74,7 @@ best_fit <- knn_fit %>%
 
 optimal_k <- best_fit %>% pull(neighbors)
 
-best_fit
-
+write.csv(best_fit, paste0(opt$out_dir,"/cv_best_fit.csv"))
 
 knn_fit <- build_model(training_set, image_recipe, "Yes", k = optimal_k)
 
@@ -39,8 +88,7 @@ diagnosis_test_predictions <- predict(knn_fit, training_set) %>%
 diagnosis_prediction_confusion <- diagnosis_test_predictions %>%
   conf_mat(truth = diagnosis, estimate = .pred_class)
 
-diagnosis_prediction_confusion
-
+write.csv(diagnosis_prediction_confusion, paste0(opt$out_dir,"/diagnosis_prediction_confusion.csv"))
 
 ### WARNING ###
 # This cell takes about 4 minutes to run!
@@ -106,7 +154,9 @@ for (i in 2:length(predictors)) {
   }
 }
 
-two_predictors %>% arrange(desc(accuracy))
+two_predictors <- two_predictors %>% arrange(desc(accuracy))
+
+write(two_predictors,paste0(opt$out_dir,"/model_formulas_result.csv"))
 
 plot_acc <- two_predictors %>%
   ggplot(aes(x = accuracy, y = reorder(formula, accuracy))) +
@@ -122,4 +172,7 @@ plot_false <- two_predictors %>%
   labs(x = "False Negatives", y = "Formula")
 
 options(repr.plot.width = 12, repr.plot.height = 12)
-plot_grid(plot_false, plot_acc, ncol = 2)
+plot <- plot_grid(plot_false, plot_acc, ncol = 2)
+
+png(filename = paste0(opt$out_dir,"/predictors_result.png"))
+
