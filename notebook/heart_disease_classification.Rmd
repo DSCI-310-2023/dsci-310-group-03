@@ -20,78 +20,11 @@ options(repr.plot.width = 12, repr.plot.height = 7)
 source("../R/load_data.R")
 source("../R/sub_values.R")
 source("../R/average_numeric.R")
-source("../R/abstraction_histogram.R")
+source("../R/plot_hist.R")
 source("../R/build_model.R")
 # set seed to make sure our file is reproducible
 set.seed(1020)
 ```
-```{r}
-# Load data file and set column names
-path <- "../data/raw/heart_disease_data.csv"
-column_names <- c("age", "sex", "chest_pain_type",
-                  "resting_bp", "cholesterol", "high_blood_sugar",
-                  "resting_ecg", "max_heart_rate", "exercise_pain",
-                  "old_peak", "slope", "no_vessels_colored",
-                  "thal", "diagnosis", "diagnosis_2")
-cleveland <- load_data(path,
-                        names = column_names,
-                        separator = ",",
-                        na_values = "?")
-glimpse(cleveland)
-```
-```{r}
-# Load data file and set column names
-path <- "../data/raw/heart_disease_data.csv"
-column_names <- c("age", "sex", "chest_pain_type",
-                  "resting_bp", "cholesterol", "high_blood_sugar",
-                  "resting_ecg", "max_heart_rate", "exercise_pain",
-                  "old_peak", "slope", "no_vessels_colored",
-                  "thal", "diagnosis", "diagnosis_2")
-cleveland <- load_data(path,
-                        names = column_names,
-                        separator = ",",
-                        na_values = "?")
-glimpse(cleveland)
-```
-```{r}
-# replace values in dataframe for readability
-high_blood_sugar_vec <-
-    sub_values(cleveland, high_blood_sugar,
-               replacement = "true", original = "TRUE")
-
-exercise_pain_vec <-
-    sub_values(cleveland, exercise_pain,
-               replacement = "true", original = "TRUE")
-
-diagnosis_vec <-
-    sub_values(cleveland, diagnosis,
-               replacement = "healthy", original = "buff")
-
-cleveland <- cleveland %>%
-                mutate(high_blood_sugar = high_blood_sugar_vec,
-                       exercise_pain = exercise_pain_vec,
-                       diagnosis = diagnosis_vec)
-cleveland
-```
-<span style="color: gray;">Table 1. Parsed Cleveland data set</span>
-
-The column `diagnosis_2` in Table 1 distinguishes different kinds of sickness. However, we could not find any documentation about what these different classes actually mean, thus we will focus on the distinction between healthy and sick in the `diagnosis` column.
-```{r}
-cleveland_select <- select(cleveland, -diagnosis_2)
-
-cleveland_select
-```
-<span style="color: gray;">Table 2. Tidied Cleveland data set</span>
-
-Having tidied the data, we now randomly split the data into a training and a testing set, taking 75% of the data for the training set.
-```{r}
-split_data <- initial_split(cleveland_select, prop = 0.75, strata = diagnosis)
-training_set <- training(split_data)
-testing_set <- testing(split_data)
-
-training_set
-```
-<span style="color: gray;">Table 3. Cleveland training set</span>
 
 We want to get a first impression of the different predictors in the data set, thus we compare the mean values of the numerical variables (Table 4) and the distribution of the factorial variables (Figure 1) for observations classified as sick and healthy.
 ```{r}
@@ -179,43 +112,15 @@ We will use the k-nearest neighbor (KNN) algorithm for our data analysis (Timber
 
 Our goal is to find the two best predictors for a KNN classification. However, taking all variables into account takes too long, so we exclude some, based on the exploration above:
 Based on Figure 1, `high blood sugar` did not show a significant increase between sick and healthy subjects. `Chest pain type` was removed from further analysis due to the initial study lacking documentation, as well as inconsistencies in the academic community for the terms and methods used to describe and categorize the types of chest pain. The academic community typically refers to only four types of angina: stable angina, unstable angina, microvascular angina, and vasospastic/variant angina (National Heart, Lung, and Blood Association, 2022). Therefore, it was challenging finding resources that properly described what abnormal angina was, as referenced in the original study. Additionally, `sex` as a predictor was excluded, as treating sex as binary is a topic we do not want to make a statement on.
-```{r}
-training_set <- training_set %>%
-    select(-sex, -high_blood_sugar, -chest_pain_type)
-```
+
 KNN does not work with non-numerical parameters, so we need to convert our factorial parameters to numerical values. `Exercise pain` is a binary variable, so we convert it to 0 if no exercise pain was reported, and 1 otherwise. `Slope` can be easily replaced with  -1 for “down”, 0 for “flat”, or 1 for “up”. For better scaling of the parameters, `thal` and `resting ECG` values were replaced with non-standard numeric values; Normal was replaced with 0 and the non-normal values (i.e., symptomatic results) were either replaced with  4 or 5. We decided to use these values to represent that the abnormal states are versions of the same broader category.
-```{r}
-# Converting categorical variable to numeric data
-transform_numeric <- function(df) {
-    mutated <- mutate(
-        df,
-        
-        exercise_pain = as.character(exercise_pain),
-        exercise_pain = replace(exercise_pain, exercise_pain == "fal", "0"),
-        exercise_pain = as.numeric(replace(exercise_pain, exercise_pain == "true", "1")),
-
-        slope = as.character(slope),
-        slope = replace(slope, slope == "down", "-1"),
-        slope = replace(slope, slope == "flat", "0"),
-        slope = as.numeric(replace(slope, slope == "up", "1")),
-
-        # Below values are "non-standard" values for a better scale
-        thal = as.character(thal),
-        thal = replace(thal, thal == "rev", "4"),
-        thal = replace(thal, thal == "norm", "0"),
-        thal = as.numeric(replace(thal, thal == "fix", "5")),
-
-        resting_ecg = as.character(resting_ecg),
-        resting_ecg = replace(resting_ecg, resting_ecg == "abn", "4"),
-        resting_ecg = replace(resting_ecg, resting_ecg == "norm", "0"),
-        resting_ecg = as.numeric(replace(resting_ecg, resting_ecg == "hyp", "5")),
-    )
-    return(mutated)
-}
+```{r training-set}
+training_set <- read_csv("../results/training_set.csv", show_col_types = FALSE)
+knitr::kable(training_set, caption = "Training Set")
 ```
-```{r}
-training_set <- transform_numeric(training_set)
-testing_set <- transform_numeric(testing_set)
+```{r testing-set}
+testing_set <- read_csv("../results/testing_set.csv", show_col_types = FALSE)
+knitr::kable(testing_set, caption = "Testing Set")
 ```
 To optimize the model, we need to ensure that there are no ‘Not-a-Number’ values in the training data. We document the number of rows we omit, to make sure that the model still provides sufficient information: Only roughly 2% of our observations contain NaN values, so we can safely ignore them.
 ```{r}

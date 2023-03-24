@@ -9,25 +9,14 @@ Options:
 --out_test=<out_test>     Path to directory where the processed testing data should be written
 
 Example:
-results/training_set.csv results/testing_set.csv: src/preprocess_data.r 
-	Rscript src/preprocess_data.r --input="../data/raw/heart_disease_data.csv" --out_train="../results/training_set.csv" --out_test="../results/testing_set.csv"
+data/processed/training_set.csv data/processed/testing_set.csv: src/preprocess_data.r 
+	Rscript src/preprocess_data.r --input=../data/raw/heart_disease_data.csv --out_train=../data/processed/training_set.csv --out_test=../data/processed/testing_set.csv
 
 ' -> doc
 
-library(tidyverse)
-library(repr)
-library(tidymodels)
 library(docopt)
-library(RColorBrewer)
-library(cowplot)
-options(repr.matrix.max.rows = 6)
-options(repr.plot.width = 12, repr.plot.height = 7) 
 # Rscripts
 source("../R/load_data.R")
-source("../R/sub_values.R")
-source("../R/average_numeric.R")
-source("../R/abstraction_histogram.R")
-source("../R/build_model.R")
 # set seed to make sure our file is reproducible
 set.seed(1020)
 
@@ -75,6 +64,9 @@ main <- function(input, out_dir){
   testing_set <- testing(split_data)
   
   training_set
+  
+  training_set <- training_set %>%
+    select(-sex, -high_blood_sugar, -chest_pain_type)
   
   # Converting categorical variable to numeric data
   transform_numeric <- function(df) {
