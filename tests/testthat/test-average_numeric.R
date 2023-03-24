@@ -7,5 +7,3 @@ iris_avg <- iris |>
 testthat::test_that("Return the summary table of mean grouped by Species",
           {testthat::expect_equal(iris_avg, 
                                   avg_numeric(iris, Species))})
-
-

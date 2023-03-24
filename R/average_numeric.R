@@ -14,5 +14,6 @@ avg_numeric <- function(dataset, class_col) {
     dplyr::summarise_if(is.numeric, mean, na.rm = TRUE)
 
   return(summary_averages)
+ }
 }
 

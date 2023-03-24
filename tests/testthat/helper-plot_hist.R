@@ -1,4 +1,5 @@
-# Plot for Sepal.Length
+
+# Plot for Sepal.Length -----------------------------------
 histogram_1 <- iris |>
   ggplot2::ggplot(ggplot2::aes(x = Sepal.Length, fill = Species)) +
   ggplot2::geom_histogram(bins = 20, position = "dodge") +
@@ -8,7 +9,7 @@ histogram_1 <- iris |>
   ggplot2::theme(text = ggplot2::element_text(size = 10)) +
   ggplot2::scale_fill_brewer(palette = "Paired")
 
-# Plot for Sepal.Width
+# Plot for Sepal.Width --------------------------------------------
 histogram_2 <- iris |>
   ggplot2::ggplot(ggplot2::aes(x = Sepal.Width, fill = Species)) +
   ggplot2::geom_histogram(bins = 20, position = "dodge") +
@@ -18,7 +19,7 @@ histogram_2 <- iris |>
   ggplot2::theme(text = ggplot2::element_text(size = 10)) +
   ggplot2::scale_fill_brewer(palette = "Paired")
 
-# Plot for Petal.Length
+# Plot for Petal.Length -------------------------------------------
 histogram_3 <- iris |>
   ggplot2::ggplot(ggplot2::aes(x = Petal.Length, fill = Species)) +
   ggplot2::geom_histogram(bins = 20, position = "dodge") +
@@ -28,7 +29,7 @@ histogram_3 <- iris |>
   ggplot2::theme(text = ggplot2::element_text(size = 10)) +
   ggplot2::scale_fill_brewer(palette = "Paired")
 
-# Plot for Petal.Width
+# Plot for Petal.Width -------------------------------------------
 histogram_4 <- iris |>
   ggplot2::ggplot(ggplot2::aes(x = Petal.Width, fill = Species)) +
   ggplot2::geom_histogram(bins = 20, position = "dodge") +
@@ -38,11 +39,4 @@ histogram_4 <- iris |>
   ggplot2::theme(text = ggplot2::element_text(size = 10)) +
   ggplot2::scale_fill_brewer(palette = "Paired")
 
-# Plot all histograms into 1 plot
-histograms_ggplot <- cowplot::plot_grid(
-  histogram_1, histogram_2, histogram_3, histogram_4,
-  ncol = 2,
-  labels = "auto",
-  label_size = 10
-)
 
