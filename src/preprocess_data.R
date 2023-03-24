@@ -76,6 +76,9 @@ main <- function(input, out_dir){
   
   training_set
   
+  training_set <- training_set %>%
+    select(-sex, -high_blood_sugar, -chest_pain_type)
+  
   # Converting categorical variable to numeric data
   transform_numeric <- function(df) {
     mutated <- mutate(
