@@ -40,9 +40,10 @@ build_model <- function(training_set, recipe, optimal, vfold, gridvals, k) {
     knn_fit <- workflows::workflow() |>
       workflows::add_recipe(recipe) |>
       workflows::add_model(knn_spec) |>
-      workflows::fit(data = {{ training_set }})
+      fit(data = {{ training_set }})
   }
 
   return(knn_fit)
 }
+
 

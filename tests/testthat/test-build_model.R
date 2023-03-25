@@ -1,21 +1,5 @@
 source("../../R/build_model.R")
 
-model_no_k <- build_model(
-  training_set,
-  image_recipe,
-  optimal = "None",
-  vfold = vfold,
-  gridvals = gridvals
-)
-
-model_with_k <- build_model(
-  training_set,
-  image_recipe,
-  "Yes",
-  k = 10
-)
-
-# Tests -----------------------------------------------------------------------
 testthat::test_that("No error when k is not specified", {
   testthat::expect_no_error(model_no_k)
 })
