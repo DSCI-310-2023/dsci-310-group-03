@@ -39,4 +39,11 @@ histogram_4 <- iris |>
   ggplot2::theme(text = ggplot2::element_text(size = 10)) +
   ggplot2::scale_fill_brewer(palette = "Paired")
 
+# Plot all histograms into 1 plot --------------------------------
+histograms_ggplot <- cowplot::plot_grid(
+  histogram_1, histogram_2, histogram_3, histogram_4,
+  ncol = 2,
+  labels = "auto",
+  label_size = 10
+)
 
