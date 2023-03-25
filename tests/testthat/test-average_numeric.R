@@ -5,11 +5,6 @@ testthat::test_that("`avg_numeric` should return a data frame or
   testthat::expect_s3_class(avg_numeric(iris, Species), "data.frame")
 })
 
-<<<<<<< Updated upstream
-testthat::test_that("Return the summary table of mean grouped by Species",
-          {testthat::expect_equal(iris_avg, 
-                                  avg_numeric(iris, Species))})
-=======
 testthat::test_that("`avg_numeric` should return a data frame or 
                     data frame extension with the number of rows
                     that corresponds to 
@@ -60,5 +55,3 @@ testthat::test_that("`avg_numeric should return a data frame or
     grouped_by_grades_output
   )
 })
-
->>>>>>> Stashed changes
