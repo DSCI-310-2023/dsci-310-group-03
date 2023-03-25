@@ -20,36 +20,36 @@ data/processed/testing_set.csv: data/raw/heart_disease_data.csv src/preprocess_d
 
 #Exploratory data visualization
 results/numeric_plot.png: data/processed/training_set.csv src/exploratory_visualization.R
-	Rscript src/exploratory_visualization.R --input=data/processed/training_set.csv --out_dir=results
+	Rscript src/exploratory_visualization.R data/processed/training_set.csv results
 
 results/categorical_plot.png: data/processed/training_set.csv src/exploratory_visualization.R
-	Rscript src/exploratory_visualization.R --input=data/processed/training_set.csv --out_dir=results
+	Rscript src/exploratory_visualization.R data/processed/training_set.csv results
 
 results/variables_histogram.png: data/processed/training_set.csv src/exploratory_visualization.R
-	Rscript src/exploratory_visualization.R --input=data/processed/training_set.csv --out_dir=results
+	Rscript src/exploratory_visualization.R data/processed/training_set.csv results
 
 #Build and optimize model
 results/cv_best_fit.csv: data/processed/training_set.csv src/model_tuning.R
-	Rscript src/model_tuning.R input_dir="data/processed" out_dir="results"
+	Rscript src/model_tuning.R data/processed results
 
 results/diagnosis_prediction_confusion.csv: data/processed/training_set.csv src/model_tuning.R
-	Rscript src/model_tuning.R input_dir="data/processed" out_dir="results"
+	Rscript src/model_tuning.R data/processed results
 
 results/model_formulas_result.csv: data/processed/training_set.csv src/model_tuning.R
-	Rscript src/model_tuning.R input_dir="data/processed" out_dir="results"
+	Rscript src/model_tuning.R data/processed results
 
 results/predictors_result.png: data/processed/training_set.csv src/model_tuning.R
-	Rscript src/model_tuning.R input_dir="data/processed" out_dir="results"
+	Rscript src/model_tuning.R data/processed results
 
 #Model selection and verification
 results/selected_formula_cv_result.csv: data/processed/training_set.csv data/processed/testing_set.csv src/model_selection_verification.R
-	Rscript src/model_selection_verification.R input_dir="data/processed" out_dir="results"
+	Rscript src/model_selection_verification.R data/processed results results
 
 results/test_results.csv: data/processed/training_set.csv data/processed/testing_set.csv src/model_selection_verification.R
-	Rscript src/model_selection_verification.R input_dir="data/processed" out_dir="results"
+	Rscript src/model_selection_verification.R data/processed results results
 
 results/final_classification_plot.csv: data/processed/training_set.csv data/processed/testing_set.csv src/model_selection_verification.R
-	Rscript src/model_selection_verification.R input_dir="data/processed" out_dir="results"
+	Rscript src/model_selection_verification.R data/processed results results
 
 #render report
 notebook/notebook/heart_disease_classification.html: notebook/notebook/heart_disease_classification.Rmd results/numeric_plot.png results/categorical_plot.png results/variables_histogram.png results/cv_best_fit.csv results/diagnosis_prediction_confusion.csv results/model_formulas_result.csv results/predictors_result.png results/selected_formula_cv_result.csv results/test_results.csv results/final_classification_plot.csv
