@@ -6,18 +6,23 @@ A csv file for accuracy results and confusion matrix for the selected formula on
 saved as 'test_results.csv'
 A plot showing the domains of classification for the final model, saved as 'final_classification_plot.csv'
 
-Usage src/model_selection_verification.R --input_dir=<input_dir> --out_dir=<out_dir>
+Usage: src/model_selection_verification.R <data_dir> <results_dir> <out_dir>
+
+<data_dir>		  Path (not including filename) to data
+<results_dir>   Path to directory where the model results are found
+<output_dir>		Path to directory where the results should be saved
 " -> doc
 
+library(docopt)
 library(tidymodels)
 library(tidyverse)
 set.seed(1020)
 
 opt <- docopt(doc)
 
-two_predictors <- read.csv(paste0(opt$input_dir,"/model_formulas_result.csv"))
-testing_set <- read.csv(paste0(opt$input_dir,"/transformed_testing_set.csv"))
-training_set <- read.csv(paste0(opt$input_dir,"/transformed_training_set.csv"))
+two_predictors <- read.csv(paste0(opt$results_dir,"/model_formulas_result.csv"))
+testing_set <- read.csv(paste0(opt$data_dir,"/transformed_testing_set.csv"))
+training_set <- read.csv(paste0(opt$data_dir,"/transformed_training_set.csv"))
 cleveland <- rbind(training_set, testing_set)
 
 selected_formula_cv_result <- two_predictors %>% filter(formula == "diagnosis ~ ." |
@@ -97,6 +102,6 @@ wkflw_plot <-
                      values = c("steelblue2", "orange2")) +
   theme(text = element_text(size = 12))
 
-png(wkflw_plot, paste0(opt$out_dir,"/final_classification_plot.png"))
+ggsave(paste0(opt$out_dir,"/final_classification_plot.png"))
 
 

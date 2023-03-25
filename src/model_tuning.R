@@ -3,67 +3,29 @@ as well as the best fit results. Additionally perform feature selection and outp
 combinations of predictors.
 
 Outputs:
-A transformed training set, output as 'transformed_training_set.csv'
-A transformed testing set with similar transformation as the training, output as 'transformed_testing_set.csv'
 The best fit result from cross validation is saved as 'cv_best_fit.csv'
 The diagnosis prediction confusion matrix is saved as 'diagnosis_prediction_confusion.csv'
 The results for different tried formulas is saved as 'model_formulas_result.csv'
 The plot for predictors results is saved as 'predictors_result.png'
 
-Usage: src/model_tuning.R --input_dir=<input_dir> --out_dir=<out_dir>
+Usage: src/model_tuning.R <input_dir> <out_dir>
+
+Options:
+<input_dir>		Path (not including filename) to data
+<out_dir>       Path to directory where the results should be saved
 " -> doc
 
+library(docopt)
 library(tidymodels)
 library(tidyverse)
+library(cowplot)
 library(here)
 source(here("R/build_model.R"))
 set.seed(1020)
 
 opt <- docopt(doc)
 
-training_set <- read.csv(paste0(opt$input_dir,'/training_set.csv'))
-testing_set <- read.csv(paste0(opt$input_dir,'/testing_set.csv'))
-
-training_set <- training_set %>%
-  select(-sex, -high_blood_sugar, -chest_pain_type)
-
-# Converting categorical variable to numeric data
-transform_numeric <- function(df) {
-  mutated <- mutate(
-    df,
-    
-    exercise_pain = as.character(exercise_pain),
-    exercise_pain = replace(exercise_pain, exercise_pain == "fal", "0"),
-    exercise_pain = as.numeric(replace(exercise_pain, exercise_pain == "true", "1")),
-    
-    slope = as.character(slope),
-    slope = replace(slope, slope == "down", "-1"),
-    slope = replace(slope, slope == "flat", "0"),
-    slope = as.numeric(replace(slope, slope == "up", "1")),
-    
-    # Below values are "non-standard" values for a better scale
-    thal = as.character(thal),
-    thal = replace(thal, thal == "rev", "4"),
-    thal = replace(thal, thal == "norm", "0"),
-    thal = as.numeric(replace(thal, thal == "fix", "5")),
-    
-    resting_ecg = as.character(resting_ecg),
-    resting_ecg = replace(resting_ecg, resting_ecg == "abn", "4"),
-    resting_ecg = replace(resting_ecg, resting_ecg == "norm", "0"),
-    resting_ecg = as.numeric(replace(resting_ecg, resting_ecg == "hyp", "5")),
-  )
-  return(mutated)
-}
-
-training_set <- transform_numeric(training_set)
-testing_set <- transform_numeric(testing_set)
-
-write.csv(training_set, paste0(opt$out_dir,"/transformed_training_set.csv"))
-write.csv(testing_set, paste0(opt$out_dir,"/transformed_testing_set.csv"))
-
-before <- nrow(training_set)
-training_set <- training_set %>% na.omit()
-after <- nrow(training_set)
+training_set <- read.csv(paste0(opt$input_dir,'/transformed_training_set.csv'))
 
 # Perform cross validation to find optimal k
 vfold <- vfold_cv(training_set, v = 5, strata = diagnosis)
@@ -95,12 +57,11 @@ knn_fit <- build_model(training_set, image_recipe, "Yes", k = optimal_k)
 # is part of tuning your classifier, you cannot use your test data for this process!
 diagnosis_test_predictions <- predict(knn_fit, training_set) %>%
   bind_cols(training_set)
-
+diagnosis_test_predictions$diagnosis <- as.factor(diagnosis_test_predictions$diagnosis)
 # pull metrics
 diagnosis_prediction_confusion <- diagnosis_test_predictions %>%
   conf_mat(truth = diagnosis, estimate = .pred_class)
-
-write.csv(diagnosis_prediction_confusion, paste0(opt$out_dir,"/diagnosis_prediction_confusion.csv"))
+capture.output(diagnosis_prediction_confusion, file = paste0(opt$out_dir,"/diagnosis_prediction_confusion.csv"))
 
 ### WARNING ###
 # This cell takes about 4 minutes to run!
@@ -151,7 +112,7 @@ for (i in 2:length(predictors)) {
     
     predictions <- predict(knn_fit, training_set) %>%
       bind_cols(training_set)
-    
+    predictions$diagnosis <- as.factor(predictions$diagnosis)
     diagnosis_prediction_confusion <- predictions %>%
       conf_mat(truth = diagnosis, estimate = .pred_class) %>%
       tidy()
@@ -168,7 +129,7 @@ for (i in 2:length(predictors)) {
 
 two_predictors <- two_predictors %>% arrange(desc(accuracy))
 
-write(two_predictors,paste0(opt$out_dir,"/model_formulas_result.csv"))
+write.csv(two_predictors,paste0(opt$out_dir,"/model_formulas_result.csv"))
 
 plot_acc <- two_predictors %>%
   ggplot(aes(x = accuracy, y = reorder(formula, accuracy))) +
@@ -186,5 +147,5 @@ plot_false <- two_predictors %>%
 options(repr.plot.width = 12, repr.plot.height = 12)
 plot <- plot_grid(plot_false, plot_acc, ncol = 2)
 
-png(filename = paste0(opt$out_dir,"/predictors_result.png"))
+ggsave(paste0(opt$out_dir,"/predictors_result.png"))
 
