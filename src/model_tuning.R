@@ -112,9 +112,9 @@ for (i in 2:length(predictors)) {
     
     predictions <- predict(knn_fit, training_set) %>%
       bind_cols(training_set)
-    predictions$diagnosis <- as.factor(predictions$diagnosis)
+    
     diagnosis_prediction_confusion <- predictions %>%
-      conf_mat(truth = diagnosis, estimate = .pred_class) %>%
+      conf_mat(truth = as.factor(diagnosis), estimate = .pred_class) %>%
       tidy()
     
     two_predictors <- two_predictors %>%

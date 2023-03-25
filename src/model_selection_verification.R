@@ -23,6 +23,12 @@ opt <- docopt(doc)
 two_predictors <- read.csv(paste0(opt$results_dir,"/model_formulas_result.csv"))
 testing_set <- read.csv(paste0(opt$data_dir,"/transformed_testing_set.csv"))
 training_set <- read.csv(paste0(opt$data_dir,"/transformed_training_set.csv"))
+
+testing_set <- testing_set %>%
+  select(-sex, -high_blood_sugar, -chest_pain_type)
+
+training_set$diagnosis <- as.factor(training_set$diagnosis)
+testing_set$diagnosis <- as.factor(testing_set$diagnosis)
 cleveland <- rbind(training_set, testing_set)
 
 selected_formula_cv_result <- two_predictors %>% filter(formula == "diagnosis ~ ." |
@@ -61,17 +67,13 @@ options(repr.plot.width = 12, repr.plot.height = 7)
 
 # create the grid of area/smoothness vals, and arrange in a data frame
 # Code taken and adapted from https://datasciencebook.ca/classification.html#fig:05-upsample-plot
-x_grid <- seq(min(clev_numeric$exercise_pain, na.rm = TRUE),
-              max(clev_numeric$exercise_pain, na.rm = TRUE),
-              length.out = 100)
+x_grid <- min(cleveland$exercise_pain, na.rm = TRUE):max(cleveland$exercise_pain, na.rm = TRUE)
 
-y_grid <- seq(min(clev_numeric$age),
-              max(clev_numeric$age),
-              length.out = 100)
+y_grid <- min(cleveland$age):max(cleveland$age)
 
 ex_age_grid <- as_tibble(expand.grid(exercise_pain = x_grid,
                                      age = y_grid))
-
+print(ex_age_grid)
 # use the fit workflow to make predictions at the grid points
 knn_pred <- predict(knn_fit, ex_age_grid)
 
@@ -84,7 +86,7 @@ prediction_table <- bind_cols(knn_pred, ex_age_grid) %>%
 # 2. the faded colored scatter for the grid points
 wkflw_plot <-
   ggplot() +
-  geom_point(data = clev_numeric, 
+  geom_point(data = cleveland, 
              mapping = aes(x = exercise_pain, 
                            y = age, 
                            color = diagnosis), 
