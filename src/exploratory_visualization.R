@@ -1,11 +1,11 @@
 "compare the mean values of the numerical variables and the distribution of the factorial variables for observations classified as sick and healthy.
 Plot the histograms to visualize the distribution of the variables.
 
-Usage: src/exploratory_visualization.R --input=<input> --out_dir=<out_dir>
+Usage: src/exploratory_visualization.R <input_dir> <out_dir>
 
 Options:
---input_dir=<input_dir>		Path (including filename) to raw data
---out_dir=<output_dir>		Path to directory where the results should be saved
+<input_dir>		  Path (not including filename) to data
+<out_dir>       Path to directory where the results should be saved
   " -> doc
 library(docopt)
 library(tidymodels)
@@ -18,12 +18,14 @@ source(here("R/plot_hist.R"))
 
 
 opt <- docopt(doc)
+
 training_set <- read.csv(paste0(opt$input_dir,"/training_set.csv"))
 
 # Average values of the numerical attributes
 summary_averages <- avg_numeric(training_set, diagnosis)
-summary_averages
-write_csv(summary_averages, paste0(opt$out_dir,"/summary_averages.csv"))
+
+
+write.csv(summary_averages,paste0(opt$out_dir,"/summary_averages.csv"))
 
 numeric_summary <- training_set |>
   select(sex, chest_pain_type, high_blood_sugar,
@@ -40,7 +42,9 @@ numeric_plot <- numeric_summary |>
   scale_fill_brewer(palette = "Paired") +
   labs(x = "Ratio", y = "Attribute", color = "Value")
 
-ggsave("numeric_plot.png", device = "png", path = out_dir, width = 10, height = 3)
+
+ggsave(paste0(opt$out_dir,"/numeric_plot.png"))
+
 
 categorical_summary <- training_set |>
   select(exercise_pain, slope, thal, diagnosis) |>
@@ -56,10 +60,8 @@ categorical_plot <- categorical_summary |>
   scale_fill_brewer(palette = "Paired") +
   labs(x = "Ratio", y = "Attribute", color = "Value")
 
-plot_grid(numeric_plot, categorical_plot, ncol = 1)
-ggsave("categorical_plot.png", device = "png", path = out_dir, width = 10, height = 3)
+ggsave(paste0(opt$out_dir,"/categorical_plot.png"))
 
-variables_histogram<- plot_hist(training_set, diagnosis, sep = "_", bins = 25, col = 3)
-ggsave("variables_histogram.png", device = "png", path = out_dir, width = 10, height = 8)
+variables_histogram<- plot_hist(training_set, diagnosis)
 
-
+ggsave(paste0(opt$out_dir,"/variables_histogram.png"))
