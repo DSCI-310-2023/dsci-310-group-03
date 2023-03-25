@@ -11,19 +11,22 @@ Options:
 
 Example:
 data/processed/training_set.csv data/processed/testing_set.csv: src/preprocess_data.r 
-	Rscript src/preprocess_data.r --input=../data/raw/heart_disease_data.csv --out_train=../data/processed/training_set.csv --out_transform_train=../data/processed/transform_training_set.csv --out_transform_test=../data/processed/transform_testing_set.csv
+	Rscript src/preprocess_data.r --input=../data/raw/heart_disease_data.csv --out_train=../data/processed/training_set.csv --out_transform_train=../data/processed/transformed_training_set.csv --out_transform_test=../data/processed/transformed_testing_set.csv
 
-' -> doc
+'-> doc
 
 library(docopt)
+library(tidymodels)
+library(here)
 # Rscripts
-source("../R/load_data.R")
+source(here("R/load_data.R"))
+source(here("R/sub_values.R"))
 # set seed to make sure our file is reproducible
 set.seed(1020)
 
 opt <- docopt(doc)
 
-main <- function(input, out_dir){
+main <- function(input, out_train, out_transform_train, out_transform_test){
   # Load data file and set column names
   column_names <- c("age", "sex", "chest_pain_type",
                     "resting_bp", "cholesterol", "high_blood_sugar",
@@ -112,10 +115,10 @@ main <- function(input, out_dir){
   # count sick entries
   nr_sick <- training_set %>% filter(diagnosis == "sick") %>% nrow()
   print(paste("Sick entries:", nr_sick, "/", nrow(training_set)))
-  
+
   # write transformed training and testing set to seperated csv files
   write_csv(training_set, out_transform_train)
   write_csv(testing_set, out_transform_test)
 }
 
-main(opt[["--input"]], opt[["--out_train"]], opt[["--out_tranform_train"]], opt[["--out_tranform_test"]])
+main(opt[["--input"]], opt[["--out_train"]], opt[["--out_transform_train"]], opt[["--out_transform_test"]])
