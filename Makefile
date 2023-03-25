@@ -12,11 +12,8 @@ data/raw/heart_disease_data.csv: src/download_data.R
 	Rscript src/download_data.R --url=https://raw.githubusercontent.com/karlie-tr/dataset_heart_disease/main/heart_disease_data.csv --out_file=data/raw/heart_disease_data.csv
 
 #preprocess the data
-data/processed/training_set.csv: data/raw/heart_disease_data.csv src/preprocess_data.R
-	Rscript src/preprocess_data.r --input=data/raw/heart_disease_data.csv --out_train=results/training_set.csv --out_test=results/testing_set.csv
-
-data/processed/testing_set.csv: data/raw/heart_disease_data.csv src/preprocess_data.R
-	Rscript src/preprocess_data.r --input=data/raw/heart_disease_data.csv --out_train=results/training_set.csv --out_test=results/testing_set.csv
+data/processed/training_set.csv data/processed/transformed_training_set.csv data/processed/transformed_testing_set.csv: data/raw/heart_disease_data.csv src/preprocess_data.R
+	Rscript src/preprocess_data.R --input=data/raw/heart_disease_data.csv --out_train=data/processed/training_set.csv --out_transform_train=data/processed/transformed_training_set.csv --out_transform_test=data/processed/transformed_testing_set.csv
 
 #Exploratory data visualization
 results/numeric_plot.png: data/processed/training_set.csv src/exploratory_visualization.R
