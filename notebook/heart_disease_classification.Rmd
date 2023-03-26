@@ -98,6 +98,7 @@ We now repeat the process described above for every subset of two predictors. We
 
 ```{r model-formula-results}
 formula_results <- readr::read_csv("../results/model_formulas_result.csv")
+highest_accuracy <- round(formula_results$accuracy[1], 2)
 
 knitr::kable(formula_results,
     caption = "The accuracy results for all tried formulas",
@@ -153,7 +154,7 @@ A research paper shows that older adults have a higher incidence of musculoskele
 # Discussion
 This analysis challenges some of the initial research done for this project. For example, cholesterol is typically considered highly correlated with heart disease [@cdc-2022-heart], however it appears not to be a strong predictor in this data set (*see Figure \@ref(fig:predictors-results)*); there is not a significant distribution difference between the sick and healthy population (*see Figure \@ref(fig:var-hist)*). On the other hand, exercise pain is a pretty good predictor for heart disease in this data set, which makes sense from a naive standpoint, as well as from the distribution of the data set (*see Figure \@ref(fig:ratio-plot)*).
 
-Beginning this project, we were optimistic about finding a model with high accuracy that could be used to predict heart disease. However, the highest accuracy found during this analysis was around 80%. Ideally, this analysis would have revealed a set of predictors with an even higher accuracy. This might be due to confounding variables, the slight imbalance (*see \@ref(fig:classificaion-plot)*) and outliers within our data set.
+Beginning this project, we were optimistic about finding a model with high accuracy that could be used to predict heart disease. However, the highest accuracy found during this analysis was around `r highest_accuracy`. Ideally, this analysis would have revealed a set of predictors with an even higher accuracy. This might be due to confounding variables, the slight imbalance (*see \@ref(fig:classificaion-plot)*) and outliers within our data set.
 
 Our model offers a preliminary diagnosis, which helps healthcare professional to save time and medical costs when identifying high-risks population. Hence, age and exercise pain are appropriate predictors for this purpose as it is inexpensive, time-efficient and require minimal testing. Despite being a preliminary diagnosis tool for heart diseases, improvements such as taking confounding variables into account and/or using a bigger data set in future projects would help improve the model's accuracy.
 
