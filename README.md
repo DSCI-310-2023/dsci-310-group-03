@@ -53,6 +53,7 @@ The jupyter notebook window should pop up in your browser.
 |testthat|3.1.3|
 |vdiffr|1.0.5|
 |devtools|2.4.5|
+|docopt|0.7.1|
 
 ## License Information
 Our project uses the MIT open source license.
