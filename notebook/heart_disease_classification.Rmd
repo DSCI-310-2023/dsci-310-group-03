@@ -124,19 +124,20 @@ knitr::kable(selected_formula_results,
     digits = 2)
 ```
 
-The chosen model uses exercise pain and age as predictor. Exercise pain can be evaluated by the patient doing exercises suggested by the doctor and recording any pain that has emerged. Furthermore, there is a very useful tool that doctors use called the exercise electrocardiogram. This can be done to determine the stress on the heart caused by exercising [@exercise-hsf].
+The chosen model uses `exercise pain` and `age` as predictor. Exercise pain can be evaluated by the patient doing exercises suggested by the doctor and recording any pain that has emerged. Furthermore, there is a very useful tool that doctors use called the exercise electrocardiogram. This can be done to determine the stress on the heart caused by exercising [@exercise-hsf].
 
 We can now verify the model on the testing data.
 
 ```{r model-quality}
 model_quality <- readr::read_csv("../results/test_results.csv")
+accuracy <- model_quality$.estimate
 
 knitr::kable(model_quality,
-    caption = "The accuracy results and confusion matrix for `exercise_pain` and `age`",
+    caption = "The accuracy results for `exercise_pain` and `age` when tested against `testing_set`",
     digits = 2)
 ```
 
-Overall, the accuracy for our model is 68%, which is much lower than expected. This could have been due to only taking into account 2 predictor variables and randomization during the splitting process.
+Overall, the accuracy for our model is `r accuracy`, which is much lower than expected. This could have been due to only taking into account 2 predictor variables and randomization during the splitting process.
 
 Using this version, the rate for diagnosing sick patients as healthy is ~34%. This means that 3 out of 10 cases of heart disease are misdiagnosed. However, as this is a simple method for doctors to use as a signal to further monitor patients for risk of developing disease, the accuracy for this version may be acceptable. We can also plot the whole data set and the areas where new data points will be classified as sick or healthy (*see Figure \@ref(fig:classificaion-plot)*).
 
