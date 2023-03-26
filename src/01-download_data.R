@@ -15,8 +15,8 @@ data/raw/heart_disease_data.csv: src/download_data.R
 opt <- docopt::docopt(doc)
 
 main <- function(url, out_file) {
-  # Download the file from website
   
+  # Download the file from website
   download.file(url, out_file)
   
 }

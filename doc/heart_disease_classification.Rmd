@@ -1,6 +1,7 @@
 ---
 title: 'DSCI 310: Diagnosing Heart Disease With Two Predictors'
 author: "Group 03: Hanzhang Cao, Karlie Truong, Kaylie Nguyen, Ser Jie Ng"
+date: "`r Sys.Date()`"
 output:
   bookdown::html_document2:
     toc: true
@@ -29,10 +30,11 @@ Cardiovascular disease is the leading cause of death worldwide [@heart-leading-c
 
 We thus want to determine: Based on only two predictors gathered from health checkups performed by doctors, does somebody suffer from heart disease?
 
-To answer this question, we analyze the Cleveland data file that contains 303 instances and records of basic information about the patient and multiple heart disease-related factors like blood pressure, blood sugar and heart rate [@uci-heart-2019]. 
-
 # Data
-Heart disease data were sourced from [UCI Machine Learning Repository website](https://archive.ics.uci.edu/ml/datasets/Heart+Disease) [@uci-heart-2019].
+```{r raw-data}
+raw_data <- readr::read_csv("../data/raw/heart_disease_data.csv")
+```
+Heart disease data were sourced from [UCI Machine Learning Repository website](https://archive.ics.uci.edu/ml/datasets/Heart+Disease) [@uci-heart-2019]. Our data has `r nrow(raw_data)` rows and `r ncol(raw_data)` column which contains variables that relates to physical health as well as their diagnosis of cardiovascular disease.
 
 # Exploratory Data Analysis
 We want to get a first impression of the different predictors in the data set, thus we compare the mean values of the numerical variables (*see Table \@ref(tab:training-set-averages-table)*) and the distribution of the factorial attributes (*see Figure \@ref(fig:ratio-plot)*) for observations classified as sick and healthy.
@@ -43,14 +45,14 @@ training_set_average_table <- readr::read_csv("../results/summary_averages.csv")
 knitr::kable(training_set_average_table, caption = "Average values of the numerical attributes", digits = 2)
 ```
 
-```{r ratio-plot, fig.show = "hold", out.width = "90%", out.height = "80%", fig.cap = "The proportion of different values in each factorial attribute"}
+```{r ratio-plot, fig.show = "hold", out.width = "80%", out.height = "70%", fig.cap = "The proportion of different values in each factorial attribute"}
 knitr::include_graphics("../results/numeric_plot.png")
 knitr::include_graphics("../results/categorical_plot.png")
 ```
 
 As the mean values do not tell us much about the numerical variables, we also plot their histograms to visualize the distribution of the variables (*see Figure \@ref(fig:var-hist)*). We will use this later to choose the predictors we want to use.
 
-```{r var-hist, fig.cap = "The distribution of value of each attribute colored by diagnosis: *(a)* Serium Cholesterol; *(b)* Age; *(c)* Resting Blood Pressure; *(d)* Max Heart Rate; *(e)* Oldpeak; *(f)* Number of Colored Vessels"}
+```{r var-hist, fig.cap = "The distribution of value of each attribute colored by diagnosis: *(a)* Serium Cholesterol; *(b)* Age; *(c)* Resting Blood Pressure; *(d)* Max Heart Rate; *(e)* Oldpeak; *(f)* Number of Colored Vessels", out.width = "80%"}
 knitr::include_graphics("../results/variables_histogram.png")
 ```
 
@@ -88,7 +90,7 @@ However, we are not only interested in the accuracy, but also in the false negat
 Note that we can not and should not optimize our whole model for the lowest false negative rate, as always predicting “sick” would set this value to 0, and the resulting model would be worthless.
 
 
-```{r prediction-confusion-plot, fig.cap = "The Confusion Matrix for all predictors"}
+```{r prediction-confusion-plot, fig.cap = "The Confusion Matrix for all predictors", out.width = "80%"}
 knitr::include_graphics("../results/conf_matrix_fig.png")
 ```
 
@@ -107,7 +109,7 @@ knitr::kable(formula_results,
 
 We also visualize the data in Figure \@ref(fig:predictors-results). The formulas on the y axis can be read as follows: The words like `diagnosis`, `thal`, `old_peak` reference the corresponding variables; `~` can be read as “is predicted by”; `+` as “and”; and `.` as “all predictors”. Thus `diagnosis ~ .` means we take all the predictors (except the ones we excluded above, such as sex), and `diagnosis ~ thal + slope` means we use the two predictors `thal` and `slope` to predict the diagnosis.
 
-```{r predictors-results, fig.cap = "The *(a)* False Negatives value and *(b)* Accuracy percentage of different combinations of predictors"}
+```{r predictors-results, fig.cap = "The *(a)* False Negatives value and *(b)* Accuracy percentage of different combinations of predictors", out.width = "80%"}
 
 knitr::include_graphics("../results/predictors_result.png")
 ```
@@ -142,7 +144,7 @@ Overall, the accuracy for our model is `r accuracy`, which is much lower than ex
 
 Using this version, the rate for diagnosing sick patients as healthy is ~34%. This means that 3 out of 10 cases of heart disease are misdiagnosed. However, as this is a simple method for doctors to use as a signal to further monitor patients for risk of developing disease, the accuracy for this version may be acceptable. We can also plot the whole data set and the areas where new data points will be classified as sick or healthy (*see Figure \@ref(fig:classificaion-plot)*).
 
-```{r classificaion-plot, fig.cap = "Fitting of data with `exercise pain` and `age` as predictors"}
+```{r classificaion-plot, fig.cap = "Fitting of data with `exercise pain` and `age` as predictors", out.width = "80%"}
 
 knitr::include_graphics("../results/final_classification_plot.png")
 ```
