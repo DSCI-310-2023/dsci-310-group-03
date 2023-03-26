@@ -9,3 +9,4 @@ RUN Rscript -e "remotes::install_version('testthat', '3.1.3', repos = 'https://c
 RUN Rscript -e "remotes::install_version('vdiffr', '1.0.5', repos = 'https://cloud.r-project.org')"
 RUN Rscript -e "remotes::install_version('docopt', '0.7.1', repos = 'https://cloud.r-project.org')"
 RUN Rscript -e "remotes::install_version('here', '1.0.1', repos = 'https://cloud.r-project.org')"
+RUN Rscript -e "remotes::install_version('bookdown', '0.21', repos = 'https://cloud.r-project.org')"
