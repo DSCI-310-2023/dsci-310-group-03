@@ -7,26 +7,31 @@ Options:
 <input_dir>		  Path (not including filename) to data
 <out_dir>       Path to directory where the results should be saved
   " -> doc
+
+# Set up ----------------------------------------------------------
 library(docopt)
 library(tidymodels)
 library(tidyverse)
 library(cowplot)
 library(here)
+
 set.seed(1020)
+
 source(here("R/average_numeric.R"))
 source(here("R/plot_hist.R"))
 
-
 opt <- docopt(doc)
 
+# Load dataset ------------------------------------------------------------
 training_set <- read.csv(paste0(opt$input_dir,"/training_set.csv"))
 
-# Average values of the numerical attributes
+# Compute mean of the numerical attributes --------------------------------
 summary_averages <- avg_numeric(training_set, diagnosis)
 
+write.csv(summary_averages, paste0(opt$out_dir,"/summary_averages.csv"),
+          row.names = FALSE)
 
-write.csv(summary_averages,paste0(opt$out_dir,"/summary_averages.csv"))
-
+# Generate plot for ratio of numeric values ------------------------------
 numeric_summary <- training_set |>
   select(sex, chest_pain_type, high_blood_sugar,
          resting_ecg, diagnosis) |> 
@@ -42,10 +47,11 @@ numeric_plot <- numeric_summary |>
   scale_fill_brewer(palette = "Paired") +
   labs(x = "Ratio", y = "Attribute", color = "Value")
 
+ggsave(paste0(opt$out_dir,"/numeric_plot.png"),
+       width = 20, height = 15, units = "cm")
 
-ggsave(paste0(opt$out_dir,"/numeric_plot.png"))
 
-
+# Generate plot for ratio of categorical values --------------------------
 categorical_summary <- training_set |>
   select(exercise_pain, slope, thal, diagnosis) |>
   pivot_longer(cols = exercise_pain:thal,
@@ -60,8 +66,15 @@ categorical_plot <- categorical_summary |>
   scale_fill_brewer(palette = "Paired") +
   labs(x = "Ratio", y = "Attribute", color = "Value")
 
-ggsave(paste0(opt$out_dir,"/categorical_plot.png"))
+ggsave(paste0(opt$out_dir,"/categorical_plot.png"),
+       width = 25, height = 20, units = "cm")
 
-variables_histogram<- plot_hist(training_set, diagnosis, title ="Histogram for different explanatory variables")
+# Generate histograms for all numeric variables --------------------------
+variables_histogram <- plot_hist(
+  training_set,
+  diagnosis,
+  col = 3,
+  sep = "_",
+  title ="Histogram for different explanatory variables")
 
 ggsave(paste0(opt$out_dir,"/variables_histogram.png"))

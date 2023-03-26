@@ -18,7 +18,6 @@ data/processed/training_set.csv data/processed/testing_set.csv: src/preprocess_d
 library(docopt)
 library(tidymodels)
 library(here)
-# Rscripts
 source(here("R/load_data.R"))
 source(here("R/sub_values.R"))
 # set seed to make sure our file is reproducible
@@ -37,7 +36,6 @@ main <- function(input, out_train, out_transform_train, out_transform_test){
                          names = column_names,
                          separator = ",",
                          na_values = "?")
-  glimpse(cleveland)
   
   
   # replace values in dataframe for readability
@@ -53,26 +51,24 @@ main <- function(input, out_train, out_transform_train, out_transform_test){
     sub_values(cleveland, diagnosis,
                replacement = "healthy", original = "buff")
   
-  cleveland <- cleveland %>%
+  cleveland_tidy <- cleveland |>
     mutate(high_blood_sugar = high_blood_sugar_vec,
            exercise_pain = exercise_pain_vec,
            diagnosis = diagnosis_vec)
-  cleveland
   
-  cleveland_select <- select(cleveland, -diagnosis_2)
+  # remove `diagnosis_2`
+  cleveland_select <- select(cleveland_tidy, -diagnosis_2)
   
-  cleveland_select
-  
+  # split data into training set and testing set
   split_data <- initial_split(cleveland_select, prop = 0.75, strata = diagnosis)
   training_set <- training(split_data)
   testing_set <- testing(split_data)
   
-  training_set
-  
   # write training set to csv file
-  write.csv(training_set, out_train)
+  write.csv(training_set, out_train, row.names = FALSE)
   
-  training_set <- training_set %>%
+  # remove `sex`, `high_blood_sugar`, `chest_pain_type` from training set
+  training_set <- training_set |>
     select(-sex, -high_blood_sugar, -chest_pain_type)
   
   # Converting categorical variable to numeric data
@@ -103,22 +99,13 @@ main <- function(input, out_train, out_transform_train, out_transform_test){
     return(mutated)
   }
   
-  training_set <- transform_numeric(training_set)
+  training_set <- transform_numeric(training_set) |>
+    na.omit()
   testing_set <- transform_numeric(testing_set)
   
-  # removing NA rows to make sure our cross-validation works
-  before <- nrow(training_set)
-  training_set <- training_set %>% na.omit()
-  after <- nrow(training_set)
-  print(paste("Removed entries:", before - after, "out of", before))
-  
-  # count sick entries
-  nr_sick <- training_set %>% filter(diagnosis == "sick") %>% nrow()
-  print(paste("Sick entries:", nr_sick, "/", nrow(training_set)))
-
   # write transformed training and testing set to seperated csv files
-  write.csv(training_set, out_transform_train)
-  write.csv(testing_set, out_transform_test)
+  write.csv(training_set, out_transform_train, row.names = FALSE)
+  write.csv(testing_set, out_transform_test, row.names = FALSE)
 }
 
 main(opt[["--input"]], opt[["--out_train"]], opt[["--out_transform_train"]], opt[["--out_transform_test"]])

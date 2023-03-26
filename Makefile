@@ -5,7 +5,7 @@
 #to run the whole analysis from the beginning: make all
 #to clear all the results output: make clean
 #
-all: notebook/heart_disease_classification.html results/numeric_plot.png results/categorical_plot.png results/variables_histogram.png results/cv_best_fit.csv results/diagnosis_prediction_confusion.csv results/model_formulas_result.csv results/predictors_result.png results/selected_formula_cv_result.csv results/test_results.csv results/final_classification_plot.csv
+all: notebook/heart_disease_classification.html results/numeric_plot.png results/categorical_plot.png results/variables_histogram.png results/cv_best_fit.csv results/conf_matrix_fig.png results/model_formulas_result.csv results/predictors_result.png results/selected_formula_cv_result.csv results/test_results.csv results/final_classification_plot.csv
 	
 
 #load data
@@ -33,7 +33,7 @@ results/variables_histogram.png: data/processed/training_set.csv src/exploratory
 results/cv_best_fit.csv: data/processed/training_set.csv src/model_tuning.R
 	Rscript src/model_tuning.R data/processed results
 
-results/diagnosis_prediction_confusion.csv: data/processed/training_set.csv src/model_tuning.R
+results/conf_matrix_fig.png: data/processed/training_set.csv src/model_tuning.R
 	Rscript src/model_tuning.R data/processed results
 
 results/model_formulas_result.csv: data/processed/training_set.csv src/model_tuning.R
@@ -62,7 +62,7 @@ clean:
 	rm -f results/categorical_plot.png
 	rm -f results/variables_histogram.png
 	rm -f results/cv_best_fit.csv
-	rm -f results/diagnosis_prediction_confusion.csv
+	rm -f results/conf_matrix_fig.png
 	rm -f results/model_formulas_result.csv
 	rm -f results/predictors_result.png
 	rm -f results/selected_formula_cv_result.csv
