@@ -82,4 +82,4 @@ clean:
 
 .PHONY: run-docker
 run-docker:
-	docker run --rm -it -v "/${PWD}:/home/jovyan/work" -p 8888:8888 karlietr/dsci-310-group-03:latest make -C "/home/jovyan/work" all
+	docker run --rm -it -v "/${PWD}:/home/jovyan/work" -p 8888:8888 karlietr/dsci-310-group-03:latest
