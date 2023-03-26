@@ -1,4 +1,3 @@
-
 # Plot for Sepal.Length -----------------------------------
 histogram_1 <- iris |>
   ggplot2::ggplot(ggplot2::aes(x = Sepal.Length, fill = Species)) +
@@ -40,10 +39,21 @@ histogram_4 <- iris |>
   ggplot2::scale_fill_brewer(palette = "Paired")
 
 # Plot all histograms into 1 plot --------------------------------
+
 histograms_ggplot <- cowplot::plot_grid(
   histogram_1, histogram_2, histogram_3, histogram_4,
   ncol = 2,
   labels = "auto",
   label_size = 10
 )
+
+plot_title <- cowplot::ggdraw() + 
+  cowplot::draw_label(title, fontface='bold')
+
+histograms_ggplot_with_title <- 
+  cowplot::plot_grid(plot_title,
+                     histograms_ggplot, 
+                     ncol = 1,
+                     rel_heights = c(0.25, 1),
+                     align = "vh")
 
