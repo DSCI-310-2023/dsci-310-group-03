@@ -32,14 +32,15 @@ To maintain the reproducibility of this project, we use Docker container images 
         - Troubleshooting:
         If encounter *The input device is not a TTY* error, use
         `docker run --rm -i -v "/${PWD}:/home/jovyan/work" -p 8888:8888 karlietr/dsci-310-group-03:latest`
-    - In Jupyter: navigate to `heart_disease_classification.ipynb` then select `Kernel > Restart Kernel and Run All Cells...`
-4. To shut down the kernel: `File > Shut Down` or `Ctrl C` twice 
 ### Running the analysis from local computer:
-To run this analysis in your local computer, please install [RStudio](https://posit.co/download/rstudio-desktop/), [Jupyter](https://jupyter.org/install) and the packages with their corresponding versions listed below in Dependencies.
-1. In your terminal, navigate to where you cloned the project, then open jupyter using:
-    `jupyter lab`
-The jupyter notebook window should pop up in your browser.
-2. navigate to `heart_disease_classification.ipynb` then select `Kernel > Restart Kernel and Run All Cells...`
+To run this analysis in your local computer:
+1. Install all the packages listed in dependencies below.
+2. Clone this repository in your terminal:
+    `git clone https://github.com/karlie-tr/dsci-310-group-03.git`
+3. To run the entire analysis from the beginning:
+    `make all`
+4. To clear all the results and reset to beginning:
+    `make clean`
 
 ## Dependencies
 |Package | Version |
