@@ -17,21 +17,21 @@ The data analysis report can be found [here](https://github.com/karlie-tr/dsci-3
 
 ## Usage
 In your terminal, navigate to the folder where you want to store the project then clone it project into your local computer 
-    `git clone https://github.com/karlie-tr/dsci-310-group-03.git`
+    ```git clone https://github.com/karlie-tr/dsci-310-group-03.git```
 Once the git repository is on your computer, navigate into the folder with 
-    `cd dsci-310-group-03`
+    ```cd dsci-310-group-03```
 The analysis can be run using 2 different ways:
 ### Running the analysis from a container
 To maintain the reproducibility of this project, we use Docker container images to create the same computational environment that the project was created on. In order to run our analysis, please follow the steps listed below:
 1. Create an account and install DockerHub following the instruction [here](https://docs.docker.com/get-docker/)
 2. In your terminal, pull the lastest version of the Docker image
-    `docker pull karlietr/dsci-310-group-03:latest`
+    ```docker pull karlietr/dsci-310-group-03:latest```
 3. To run the analysis from the Docker container:
     - In terminal:
-    `docker run --rm -it -v "/${PWD}:/home/jovyan/work" -p 8888:8888 karlietr/dsci-310-group-03:latest`
+    ```docker run --rm -it -v "/${PWD}:/home/jovyan/work" -p 8888:8888 karlietr/dsci-310-group-03:latest```
         - Troubleshooting:
         If encounter *The input device is not a TTY* error, use
-        `docker run --rm -i -v "/${PWD}:/home/jovyan/work" -p 8888:8888 karlietr/dsci-310-group-03:latest`
+        ```docker run --rm -i -v "/${PWD}:/home/jovyan/work" -p 8888:8888 karlietr/dsci-310-group-03:latest```
 ### Running the analysis from local computer:
 To run this analysis in your local computer:
 1. Install all the packages listed in dependencies below.
@@ -54,6 +54,8 @@ To run this analysis in your local computer:
 |testthat|3.1.3|
 |vdiffr|1.0.5|
 |devtools|2.4.5|
+|docopt|0.7.1|
+|here|1.0.1|
 
 ## License Information
 Our project uses the MIT open source license.
