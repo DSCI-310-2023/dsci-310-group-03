@@ -56,6 +56,7 @@ The jupyter notebook window should pop up in your browser.
 |docopt|0.7.1|
 |here|1.0.1|
 |bookdown|0.21|
+|knitr|1.42|
 
 ## License Information
 Our project uses the MIT open source license.
