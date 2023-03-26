@@ -54,6 +54,7 @@ The jupyter notebook window should pop up in your browser.
 |vdiffr|1.0.5|
 |devtools|2.4.5|
 |docopt|0.7.1|
+|here|1.0.1|
 
 ## License Information
 Our project uses the MIT open source license.
