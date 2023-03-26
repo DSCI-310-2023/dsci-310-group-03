@@ -18,8 +18,8 @@ data/processed/training_set.csv data/processed/testing_set.csv: src/preprocess_d
 library(docopt)
 library(tidymodels)
 library(here)
-source(here("R/load_data.R"))
-source(here("R/sub_values.R"))
+source(here("src/functions/load_data.R"))
+source(here("src/functions/sub_values.R"))
 # set seed to make sure our file is reproducible
 set.seed(1020)
 

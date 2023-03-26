@@ -20,7 +20,7 @@ library(tidymodels)
 library(tidyverse)
 library(cowplot)
 library(here)
-source(here("R/build_model.R"))
+source(here("src/functions/build_model.R"))
 set.seed(1020)
 
 opt <- docopt(doc)

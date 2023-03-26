@@ -17,8 +17,8 @@ library(here)
 
 set.seed(1020)
 
-source(here("R/average_numeric.R"))
-source(here("R/plot_hist.R"))
+source(here("src/functions/average_numeric.R"))
+source(here("src/functions/plot_hist.R"))
 
 opt <- docopt(doc)
 
