@@ -5,7 +5,8 @@
 #to run the whole analysis from the beginning: make all
 #to clear all the results output: make clean
 #
-all: notebook/heart_disease_classification.html
+all: notebook/heart_disease_classification.html results/numeric_plot.png results/categorical_plot.png results/variables_histogram.png results/cv_best_fit.csv results/diagnosis_prediction_confusion.csv results/model_formulas_result.csv results/predictors_result.png results/selected_formula_cv_result.csv results/test_results.csv results/final_classification_plot.csv
+	
 
 #load data
 data/raw/heart_disease_data.csv: src/download_data.R
@@ -16,14 +17,17 @@ data/processed/training_set.csv data/processed/transformed_training_set.csv data
 	Rscript src/preprocess_data.R --input=data/raw/heart_disease_data.csv --out_train=data/processed/training_set.csv --out_transform_train=data/processed/transformed_training_set.csv --out_transform_test=data/processed/transformed_testing_set.csv
 
 #Exploratory data visualization
+results/summary_averages.csv: data/processed/training_set.csv src/exploratory_visualization.R
+	Rscript src/exploratory_visualization.R data/processed results
+
 results/numeric_plot.png: data/processed/training_set.csv src/exploratory_visualization.R
-	Rscript src/exploratory_visualization.R data/processed/training_set.csv results
+	Rscript src/exploratory_visualization.R data/processed results
 
 results/categorical_plot.png: data/processed/training_set.csv src/exploratory_visualization.R
-	Rscript src/exploratory_visualization.R data/processed/training_set.csv results
+	Rscript src/exploratory_visualization.R data/processed results
 
 results/variables_histogram.png: data/processed/training_set.csv src/exploratory_visualization.R
-	Rscript src/exploratory_visualization.R data/processed/training_set.csv results
+	Rscript src/exploratory_visualization.R data/processed results
 
 #Build and optimize model
 results/cv_best_fit.csv: data/processed/training_set.csv src/model_tuning.R
@@ -39,13 +43,13 @@ results/predictors_result.png: data/processed/training_set.csv src/model_tuning.
 	Rscript src/model_tuning.R data/processed results
 
 #Model selection and verification
-results/selected_formula_cv_result.csv: data/processed/training_set.csv data/processed/testing_set.csv src/model_selection_verification.R
+results/selected_formula_cv_result.csv: data/processed/training_set.csv src/model_selection_verification.R
 	Rscript src/model_selection_verification.R data/processed results results
 
-results/test_results.csv: data/processed/training_set.csv data/processed/testing_set.csv src/model_selection_verification.R
+results/test_results.csv: data/processed/training_set.csv data/processed/transformed_testing_set.csv src/model_selection_verification.R
 	Rscript src/model_selection_verification.R data/processed results results
 
-results/final_classification_plot.csv: data/processed/training_set.csv data/processed/testing_set.csv src/model_selection_verification.R
+results/final_classification_plot.csv: data/processed/training_set.csv data/processed/transformed_testing_set.csv src/model_selection_verification.R
 	Rscript src/model_selection_verification.R data/processed results results
 
 #render report
@@ -53,7 +57,7 @@ notebook/notebook/heart_disease_classification.html: notebook/notebook/heart_dis
 	Rscript -e "rmarkdown::render('notebook/'heart_disease_classification.Rmd)"
 
 clean:
-	rm -f data/processed/training_set.csv data/processed/testing_set.csv data/raw/heart_disease_data.csv
+	rm -f data/processed/training_set.csv data/processed/transformed_testing_set.csv data/processed/transformed_training_set.csv data/raw/heart_disease_data.csv
 	rm -f results/numeric_plot.png 
 	rm -f results/categorical_plot.png
 	rm -f results/variables_histogram.png
@@ -63,4 +67,6 @@ clean:
 	rm -f results/predictors_result.png
 	rm -f results/selected_formula_cv_result.csv
 	rm -f results/test_results.csv
-	rm -f results/final_classification_plot.csv
+	rm -f results/final_classification_plot.png
+	rm -f results/summary_averages.csv
+	rm -f notebook/heart_disease_classification.html

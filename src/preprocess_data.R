@@ -70,7 +70,7 @@ main <- function(input, out_train, out_transform_train, out_transform_test){
   training_set
   
   # write training set to csv file
-  write_csv(training_set, out_train)
+  write.csv(training_set, out_train)
   
   training_set <- training_set %>%
     select(-sex, -high_blood_sugar, -chest_pain_type)
@@ -117,8 +117,8 @@ main <- function(input, out_train, out_transform_train, out_transform_test){
   print(paste("Sick entries:", nr_sick, "/", nrow(training_set)))
 
   # write transformed training and testing set to seperated csv files
-  write_csv(training_set, out_transform_train)
-  write_csv(testing_set, out_transform_test)
+  write.csv(training_set, out_transform_train)
+  write.csv(testing_set, out_transform_test)
 }
 
 main(opt[["--input"]], opt[["--out_train"]], opt[["--out_transform_train"]], opt[["--out_transform_test"]])
