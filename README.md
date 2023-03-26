@@ -18,7 +18,7 @@ The data analysis report can be found [here](https://github.com/karlie-tr/dsci-3
 ## Usage
 In your terminal, navigate to the folder where you want to store the project then clone it project into your local computer 
     ```git clone https://github.com/karlie-tr/dsci-310-group-03.git```
-Once the git repository is on your computer, navigate into the folder with 
+Once the git repository is on your computer, navigate into the folder with:
     ```cd dsci-310-group-03```
 The analysis can be run using 2 different ways:
 ### Running the analysis from a container
@@ -32,15 +32,21 @@ To maintain the reproducibility of this project, we use Docker container images 
         - Troubleshooting:
         If encounter *The input device is not a TTY* error, use
         ```docker run --rm -i -v "/${PWD}:/home/jovyan/work" -p 8888:8888 karlietr/dsci-310-group-03:latest```
+ 4. Navigate to the root folder `/work`, then open a terminal in the jupyter lab window, then in terminal:
+    ```make all```
+    Once the Makefile finish running, a results folder with all the figures and tables would be available as well as a html version of `heart_disease_analysis.Rmd` in the `doc` folder
+
 ### Running the analysis from local computer:
 To run this analysis in your local computer:
 1. Install all the packages listed in dependencies below.
 2. Clone this repository in your terminal:
-    `git clone https://github.com/karlie-tr/dsci-310-group-03.git`
-3. To run the entire analysis from the beginning:
-    `make all`
+    ```git clone https://github.com/karlie-tr/dsci-310-group-03.git```
+3. To run the entire analysis from the beginning and render a html version of the analysis:
+   ```make all```
 4. To clear all the results and reset to beginning:
-    `make clean`
+   ```make clean```
+5. To run only the analysis:
+   ```make analysis```
 
 ## Dependencies
 |Package | Version |

@@ -1,4 +1,4 @@
-source("../../R/build_model.R")
+source("../../src/functions/build_model.R")
 
 testthat::test_that("No error when k is not specified", {
   testthat::expect_no_error(model_no_k)

@@ -16,5 +16,16 @@ data_from_read_delim <- readr::read_delim(
   col_names = column_names,
   na = "?"
 ) |>
-  dplyr::mutate_if(is.character, as.factor)
+  dplyr::mutate(sex = as.factor(sex),
+                chest_pain_type = as.factor(chest_pain_type), 
+                high_blood_sugar = as.factor(high_blood_sugar), 
+                resting_ecg = as.factor(resting_ecg), 
+                exercise_pain = as.factor(exercise_pain), 
+                slope = as.factor(slope), 
+                thal = as.factor(thal), 
+                diagnosis = as.factor(diagnosis), 
+                diagnosis_2 = as.factor(diagnosis_2))
+
+
+
 

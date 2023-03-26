@@ -15,7 +15,7 @@ sub_values <- function(data, column, replacement, original) {
     data |>
     dplyr::mutate({{ column }} := sub(original, replacement, {{ column }})) |>
     dplyr::mutate_if(is.character, as.factor)
-  new_column <- pull(new_data, {{ column }})
+  new_column <- dplyr::pull(new_data, {{ column }})
 
   return(new_column)
 }

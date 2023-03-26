@@ -35,9 +35,11 @@ load_data <- function(path, names, separator = ",", na_values = "NAs") {
       delim = separator,
       show_col_types = FALSE,
       na = na_values
-    ) |>
+    ) 
+  
+  tidy_data <- new_data |>
     dplyr::mutate_if(is.character, as.factor)
 
-  return(new_data)
+  return(tidy_data)
 }
 
