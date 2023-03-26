@@ -57,34 +57,35 @@ main <- function(input, out_train, out_transform_train, out_transform_test) {
     )
 
   cleveland_tidy <- cleveland |>
-    mutate(
+    dplyr::mutate(
       high_blood_sugar = high_blood_sugar_vec,
       exercise_pain = exercise_pain_vec,
       diagnosis = diagnosis_vec
     )
 
   # remove `diagnosis_2`
-  cleveland_select <- select(cleveland_tidy, -diagnosis_2)
+  cleveland_select <- dplyr::select(cleveland_tidy, -diagnosis_2)
 
   # split data into training set and testing set
-  split_data <- tidymodels::initial_split(cleveland_select,
+  split_data <- rsample::initial_split(
+    cleveland_select,
     prop = 0.75,
     strata = diagnosis
   )
 
-  training_set <- tidymodels::training(split_data)
-  testing_set <- tidymodels::testing(split_data)
+  training_set <- rsample::training(split_data)
+  testing_set <- rsample::testing(split_data)
 
   # write training set to csv file
   write.csv(training_set, out_train, row.names = FALSE)
 
   # remove `sex`, `high_blood_sugar`, `chest_pain_type` from training set
   training_set <- training_set |>
-    dyplr::select(-sex, -high_blood_sugar, -chest_pain_type)
+    dplyr::select(-sex, -high_blood_sugar, -chest_pain_type)
 
   # converting categorical variable to numeric data
   transform_numeric <- function(df) {
-    mutated <- dyplr::mutate(
+    mutated <- dplyr::mutate(
       df,
       exercise_pain = as.character(exercise_pain),
       exercise_pain = replace(exercise_pain, exercise_pain == "fal", "0"),

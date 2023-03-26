@@ -8,12 +8,12 @@
 
 all: 
 	make clean
-	make run-analysis
-	make render-report
-	make clean
+	make analysis
+	make report
 
-.PHONY: run-analysis
+.PHONY: analysis
 analysis: results/numeric_plot.png results/categorical_plot.png results/variables_histogram.png results/cv_best_fit.csv results/conf_matrix_fig.png results/model_formulas_result.csv results/predictors_result.png results/selected_formula_cv_result.csv results/test_results.csv results/final_classification_plot.csv
+
 # load data
 data/raw/heart_disease_data.csv: src/01-download_data.R
 	Rscript src/01-download_data.R --url=https://raw.githubusercontent.com/karlie-tr/dataset_heart_disease/main/heart_disease_data.csv --out_file=data/raw/heart_disease_data.csv
@@ -59,10 +59,9 @@ results/final_classification_plot.csv: data/processed/training_set.csv data/proc
 	Rscript src/05-model_selection_verification.R data/processed results results
 
 
-.PHONY: render-report
-report:
+.PHONY: report
+report: 
 	Rscript -e "rmarkdown::render('doc/heart_disease_classification.Rmd', output_dir = here::here('doc'))"
-
 
 .PHONY: clean
 clean:

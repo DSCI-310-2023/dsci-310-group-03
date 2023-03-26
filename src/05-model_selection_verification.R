@@ -64,7 +64,7 @@ knn_fit <- workflows::workflow() |>
 
 testing_set <- testing_set |> na.omit()
 
-predictions <- ipred::predict(knn_fit, testing_set) |>
+predictions <- stats::predict(knn_fit, testing_set) |>
   dplyr::bind_cols(testing_set)
 
 final_quality <- predictions |>
@@ -118,7 +118,7 @@ wkflw_plot <-
   ) +
   ggplot2::geom_point(
     data = prediction_table,
-    mapping = aes(
+    mapping = ggplot2::aes(
       x = exercise_pain,
       y = age,
       color = Class
@@ -137,4 +137,4 @@ wkflw_plot <-
   ) +
   ggplot2::theme(text = element_text(size = 12))
 
-ggsave(paste0(opt$out_dir, "/final_classification_plot.png"))
+ggplot2::ggsave(paste0(opt$out_dir, "/final_classification_plot.png"))
