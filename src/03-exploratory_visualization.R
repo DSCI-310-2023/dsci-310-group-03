@@ -51,7 +51,7 @@ ggsave(paste0(opt$out_dir,"/numeric_plot.png"),
        width = 20, height = 15, units = "cm")
 
 
-# Generate plot for ratio of categorical values --------------------------
+# Generate plot for ratio of categorical values --------------------------------
 categorical_summary <- training_set |>
   select(exercise_pain, slope, thal, diagnosis) |>
   pivot_longer(cols = exercise_pain:thal,
@@ -69,7 +69,7 @@ categorical_plot <- categorical_summary |>
 ggsave(paste0(opt$out_dir,"/categorical_plot.png"),
        width = 25, height = 20, units = "cm")
 
-# Generate histograms for all numeric variables --------------------------
+# Generate histograms for all numeric variables --------------------------------
 variables_histogram <- plot_hist(
   training_set,
   diagnosis,

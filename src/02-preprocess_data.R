@@ -26,7 +26,7 @@ set.seed(1020)
 opt <- docopt(doc)
 
 main <- function(input, out_train, out_transform_train, out_transform_test){
-  # Load data file and set column names
+  # load data file and set column names
   column_names <- c("age", "sex", "chest_pain_type",
                     "resting_bp", "cholesterol", "high_blood_sugar",
                     "resting_ecg", "max_heart_rate", "exercise_pain",
@@ -71,7 +71,7 @@ main <- function(input, out_train, out_transform_train, out_transform_test){
   training_set <- training_set |>
     select(-sex, -high_blood_sugar, -chest_pain_type)
   
-  # Converting categorical variable to numeric data
+  # converting categorical variable to numeric data
   transform_numeric <- function(df) {
     mutated <- mutate(
       df,
@@ -99,6 +99,7 @@ main <- function(input, out_train, out_transform_train, out_transform_test){
     return(mutated)
   }
   
+  # transform training and testing set for model buiding
   training_set <- transform_numeric(training_set) |>
     na.omit()
   testing_set <- transform_numeric(testing_set)

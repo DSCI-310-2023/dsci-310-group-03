@@ -13,20 +13,21 @@ Usage: src/model_selection_verification.R <data_dir> <results_dir> <out_dir>
 <output_dir>		Path to directory where the results should be saved
 " -> doc
 
+# Set up -----------------------------------------------------------------------
 library(docopt)
 library(tidymodels)
 library(tidyverse)
+
 set.seed(1020)
 
 opt <- docopt(doc)
 
-# read in datafiles ------------------------------------------------------------
+# Read in datafiles ------------------------------------------------------------
 two_predictors <- read.csv(paste0(opt$results_dir, "/model_formulas_result.csv"))
 testing_set <- read.csv(paste0(opt$data_dir, "/transformed_testing_set.csv"))
 training_set <- read.csv(paste0(opt$data_dir, "/transformed_training_set.csv"))
 
-# build model with selected formula -------------------------------------------
-
+# Build model with selected formula -------------------------------------------
 testing_set <- testing_set |>
   select(-sex, -high_blood_sugar, -chest_pain_type)
 
@@ -56,7 +57,7 @@ knn_fit <- workflow() |>
   add_model(knn_spec) |>
   fit(data = training_set)
 
-# determine model accuracy ----------------------------------------------------
+# Determine model accuracy ----------------------------------------------------
 
 testing_set <- testing_set |> na.omit()
 
@@ -71,7 +72,7 @@ write.csv(final_quality, paste0(opt$out_dir, "/test_results.csv"),
   row.names = FALSE)
 
 # Model visualization ---------------------------------------------------------
-# Code taken and adapted 
+# code taken and adapted 
 # from https://datasciencebook.ca/classification.html#fig:05-upsample-plot
 
 # bind training_set and testing_set for viz

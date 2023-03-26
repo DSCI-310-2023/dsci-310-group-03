@@ -15,19 +15,23 @@ Options:
 <out_dir>       Path to directory where the results should be saved
 " -> doc
 
+# Set up -----------------------------------------------------------------------
 library(docopt)
 library(tidymodels)
 library(tidyverse)
 library(cowplot)
 library(here)
-source(here("src/functions/build_model.R"))
+
 set.seed(1020)
+
+source(here("src/functions/build_model.R"))
 
 opt <- docopt(doc)
 
+# Load data --------------------------------------------------------------------
 training_set <- read.csv(paste0(opt$input_dir, "/transformed_training_set.csv"))
 
-# Perform cross validation to find optimal k
+# Perform cross validation to find optimal k -----------------------------------
 vfold <- vfold_cv(training_set, v = 5, strata = diagnosis)
 gridvals <- tibble(neighbors = seq(1, 30, by = 2))
 
@@ -55,16 +59,18 @@ write.csv(best_fit, paste0(opt$out_dir, "/cv_best_fit.csv"),
 
 knn_fit <- build_model(training_set, image_recipe, "Yes", k = optimal_k)
 
-# predicting the whole training set to get an idea of the accuracy
-# Since the choice of which variables to include as predictors
-# is part of tuning your classifier, you cannot use your test data for this process!
+# Predicting the training set --------------------------------------------------
 diagnosis_test_predictions <- predict(knn_fit, training_set) |>
   bind_cols(training_set)
-diagnosis_test_predictions$diagnosis <- as.factor(diagnosis_test_predictions$diagnosis)
+
+diagnosis_test_predictions$diagnosis <- 
+  as.factor(diagnosis_test_predictions$diagnosis)
+
 # pull metrics
 diagnosis_prediction_confusion <- diagnosis_test_predictions |>
   conf_mat(truth = diagnosis, estimate = .pred_class)
 
+# plot confusion matrix for predictions
 conf_matrix_fig <-
   autoplot(diagnosis_prediction_confusion, type = "heatmap") +
   scale_fill_gradient(low = "#D6EAF8", high = "#2E86C1") +
@@ -72,7 +78,10 @@ conf_matrix_fig <-
 
 ggsave(paste0(opt$out_dir, "/conf_matrix_fig.png"))
 
+# Plot accuracy of models that used different predictor pairs ------------------
+
 predictors <- colnames(training_set |> select(-diagnosis))
+
 # iterate over all pairs of predictors
 two_predictors <- tibble(
   formula = c("diagnosis ~ ."), k = c(optimal_k),
@@ -139,10 +148,12 @@ for (i in 2:length(predictors)) {
 
 two_predictors <- two_predictors |> arrange(desc(accuracy))
 
+# save results
 write.csv(two_predictors, paste0(opt$out_dir, "/model_formulas_result.csv"),
   row.names = FALSE
 )
 
+# plot accuracy and false healthy data 
 plot_acc <- two_predictors |>
   ggplot(aes(x = accuracy, y = reorder(formula, accuracy))) +
   geom_bar(stat = "identity", fill = "#1f78b4") +
