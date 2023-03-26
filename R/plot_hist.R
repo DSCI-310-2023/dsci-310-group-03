@@ -8,19 +8,25 @@
 #'             the number of bins in histograms
 #' @param ncol the number of columns when arranging the plots
 #' @param sep the character that is seperating the column names
+#' @param title a string that indicates the plot title
 #'
 #' @return A histogram of all numeric variables that is
 #'         grouped by the class_Column
 #'
 #' @examples
-#' plot_hist(iris, Species, binwidth = 0.25)
-#' plot_hist(iris, Species)
-#' plot_hist(iris, Species, binwidth = 0.25, col = 3)
+#' plot_hist(iris, Species, title = "Histogram")
+#' plot_hist(iris, Species, binwidth = 0.25, col = 3, title = "Histogram")
+
 plot_hist <- function(data,
                       class_column,
                       sep = ".",
                       bins = 20,
-                      col = 2) {
+                      col = 2,
+                      title) {
+  
+  if (!is.character(title)) {
+    stop("`title` should be a string")
+  }
   
   # Create a new empty list
   plots <- list()
@@ -66,12 +72,19 @@ plot_hist <- function(data,
     })
   }
 
+ plot_title <- cowplot::ggdraw() + 
+    cowplot::draw_label(title, fontface='bold')
+ 
+  p <- cowplot::plot_grid(plotlist = plots,
+                     ncol = col,
+                     labels = "auto",
+                     label_size = 10)
+
   # return the arranged plots with labels
-  return(cowplot::plot_grid(
-    plotlist = plots,
-    ncol = col,
-    labels = "auto",
-    label_size = 10
-  ))
-}
+  return(cowplot::plot_grid(plot_title, 
+                            p, 
+                            ncol = 1,
+                            rel_heights = c(0.25, 1),
+                            align = "vh"))
+  }
 
