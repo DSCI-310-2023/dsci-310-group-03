@@ -62,6 +62,6 @@ categorical_plot <- categorical_summary |>
 
 ggsave(paste0(opt$out_dir,"/categorical_plot.png"))
 
-variables_histogram<- plot_hist(training_set, diagnosis)
+variables_histogram<- plot_hist(training_set, diagnosis, title ="Histogram for different explanatory variables")
 
 ggsave(paste0(opt$out_dir,"/variables_histogram.png"))

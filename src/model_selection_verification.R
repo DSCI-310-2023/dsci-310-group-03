@@ -67,7 +67,7 @@ options(repr.plot.width = 12, repr.plot.height = 7)
 
 # create the grid of area/smoothness vals, and arrange in a data frame
 # Code taken and adapted from https://datasciencebook.ca/classification.html#fig:05-upsample-plot
-x_grid <- min(cleveland$exercise_pain, na.rm = TRUE):max(cleveland$exercise_pain, na.rm = TRUE)
+x_grid <- c(min(cleveland$exercise_pain, na.rm = TRUE),max(cleveland$exercise_pain, na.rm = TRUE))
 
 y_grid <- min(cleveland$age):max(cleveland$age)
 
