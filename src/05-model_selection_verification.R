@@ -14,9 +14,9 @@ Usage: src/model_selection_verification.R <data_dir> <results_dir> <out_dir>
 " -> doc
 
 # Set up -----------------------------------------------------------------------
-library(docopt)
-library(tidymodels)
-library(tidyverse)
+suppressMessages(library(docopt))
+suppressMessages(library(tidymodels))
+suppressMessages(library(tidyverse))
 
 set.seed(1020)
 

@@ -15,11 +15,13 @@ data/processed/training_set.csv data/processed/testing_set.csv: src/preprocess_d
 
 '-> doc
 
-library(docopt)
-library(tidymodels)
-library(here)
+suppressMessages(library(docopt))
+suppressMessages(library(tidymodels))
+suppressMessages(library(here))
+
 source(here("src/functions/load_data.R"))
 source(here("src/functions/sub_values.R"))
+
 # set seed to make sure our file is reproducible
 set.seed(1020)
 
@@ -32,6 +34,7 @@ main <- function(input, out_train, out_transform_train, out_transform_test){
                     "resting_ecg", "max_heart_rate", "exercise_pain",
                     "old_peak", "slope", "no_vessels_colored",
                     "thal", "diagnosis", "diagnosis_2")
+  
   cleveland <- load_data(input,
                          names = column_names,
                          separator = ",",

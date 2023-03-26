@@ -16,11 +16,11 @@ Options:
 " -> doc
 
 # Set up -----------------------------------------------------------------------
-library(docopt)
-library(tidymodels)
-library(tidyverse)
-library(cowplot)
-library(here)
+suppressMessages(library(docopt))
+suppressMessages(library(tidymodels))
+suppressMessages(library(tidyverse))
+suppressMessages(library(cowplot))
+suppressMessages(library(here))
 
 set.seed(1020)
 
