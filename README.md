@@ -30,13 +30,13 @@ To maintain the reproducibility of this project, we use Docker container images 
     ```
 3. To run the analysis from the Docker container:
     - In terminal:
-    ```docker run --rm -it -v "/${PWD}:/home/jovyan/work" -p 8888:8888 karlietr/dsci-310-group-03:latest
     ```
-        - Troubleshooting:
-        If encounter *The input device is not a TTY* error, use:
-        ```
-        docker run --rm -i -v "/${PWD}:/home/jovyan/work" -p 8888:8888 karlietr/dsci-310-group-03:latest
-        ```
+    docker run --rm -it -v "/${PWD}:/home/jovyan/work" -p 8888:8888 karlietr/dsci-310-group-03:latest
+    ```
+    - Troubleshooting: If encounter *The input device is not a TTY* error, use:
+    ```
+    docker run --rm -i -v "/${PWD}:/home/jovyan/work" -p 8888:8888 karlietr/dsci-310-group-03:latest
+    ```
  4. Navigate to the root folder `/work`, then open a terminal in the jupyter lab window, then in terminal:
     ```
     make all
