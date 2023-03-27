@@ -17,6 +17,8 @@ bibliography: references.bib
 ---
 
 ```{r set-up, include = FALSE}
+suppressPackageStartupMessages({
+  library(here)})
 # hide code chunks
 knitr::opts_chunk$set(echo = FALSE,
                       message = FALSE,
@@ -32,7 +34,7 @@ We thus want to determine: Based on only two predictors gathered from health che
 
 # Data
 ```{r raw-data}
-raw_data <- readr::read_csv("../data/raw/heart_disease_data.csv")
+raw_data <- readr::read_csv(here("data/raw/heart_disease_data.csv"))
 ```
 Heart disease data were sourced from [UCI Machine Learning Repository website](https://archive.ics.uci.edu/ml/datasets/Heart+Disease) [@uci-heart-2019]. Our data has `r nrow(raw_data)` rows and `r ncol(raw_data)` column which contains variables that relates to physical health as well as their diagnosis of cardiovascular disease.
 
@@ -40,20 +42,20 @@ Heart disease data were sourced from [UCI Machine Learning Repository website](h
 We want to get a first impression of the different predictors in the data set, thus we compare the mean values of the numerical variables (*see Table \@ref(tab:training-set-averages-table)*) and the distribution of the factorial attributes (*see Figure \@ref(fig:ratio-plot)*) for observations classified as sick and healthy.
 
 ```{r training-set-averages-table}
-training_set_average_table <- readr::read_csv("../results/summary_averages.csv")
+training_set_average_table <- readr::read_csv(here("results/summary_averages.csv"))
 
 knitr::kable(training_set_average_table, caption = "Average values of the numerical attributes", digits = 2)
 ```
 
 ```{r ratio-plot, fig.show = "hold", out.width = "80%", out.height = "70%", fig.cap = "The proportion of different values in each factorial attribute"}
-knitr::include_graphics("../results/numeric_plot.png")
-knitr::include_graphics("../results/categorical_plot.png")
+knitr::include_graphics(here("results/numeric_plot.png"))
+knitr::include_graphics(here("results/categorical_plot.png"))
 ```
 
 As the mean values do not tell us much about the numerical variables, we also plot their histograms to visualize the distribution of the variables (*see Figure \@ref(fig:var-hist)*). We will use this later to choose the predictors we want to use.
 
 ```{r var-hist, fig.cap = "The distribution of value of each attribute colored by diagnosis: *(a)* Serium Cholesterol; *(b)* Age; *(c)* Resting Blood Pressure; *(d)* Max Heart Rate; *(e)* Oldpeak; *(f)* Number of Colored Vessels", out.width = "80%"}
-knitr::include_graphics("../results/variables_histogram.png")
+knitr::include_graphics(here("results/variables_histogram.png"))
 ```
 
 # Building & Optimizing Our Model
@@ -74,7 +76,7 @@ Despite aiming for two predictors, we first want to build and optimize a model f
 The choice of the parameter $k$ neighbors used has a lot of influence on the accuracy of the model. We apply cross-validation to optimize this parameter. Odd values of $k$ ranging from 1 to 30 are tested, since odd values have the advantage of not needing a tie-breaker during the KNN algorithm. Looking at more than every 7th data point would probably lead to underfitting [@timbers-2022-textbook]. As noted above, KNN needs data where the euclidean distances describe the similarity between the data points, thus it is important that the data set is scaled. This way the euclidean distances mimic the distance of the data points on a graph with linear axes.
 
 ```{r cross-val-results}
-cv_results <- readr::read_csv("../results/cv_best_fit.csv")
+cv_results <- readr::read_csv(here("results/cv_best_fit.csv"))
 best_k <- cv_results$neighbors
 accuracy <- round(cv_results$mean, 2)
 
@@ -91,7 +93,7 @@ Note that we can not and should not optimize our whole model for the lowest fals
 
 
 ```{r prediction-confusion-plot, fig.cap = "The Confusion Matrix for all predictors", out.width = "80%"}
-knitr::include_graphics("../results/conf_matrix_fig.png")
+knitr::include_graphics(here("results/conf_matrix_fig.png"))
 ```
 
 The resulting confusion matrix is shown in \@ref(fig:prediction-confusion-plot). The first column shows the observations that are actually healthy, the second one the ones that are healthy. The first row shows the observations that are predicted as healthy, with those predicted as sick in the second row. Thus, there are 105 people who are correctly determined as healthy, 79 who are correctly determined as sick, 23 who are labeled as healthy despite being sick (which is the bad case), and 14 that are labeled as sick despite being healthy.
@@ -99,7 +101,7 @@ The resulting confusion matrix is shown in \@ref(fig:prediction-confusion-plot).
 We now repeat the process described above for every subset of two predictors. We thereby track the predictors, the optimized value of $k$, the accuracy, and the number of false negatives. The resulting data are shown in Table \@ref(tab:model-formula-results).
 
 ```{r model-formula-results}
-formula_results <- readr::read_csv("../results/model_formulas_result.csv")
+formula_results <- readr::read_csv(here("results/model_formulas_result.csv"))
 highest_accuracy <- round(formula_results$accuracy[1], 2)
 
 knitr::kable(formula_results,
@@ -111,7 +113,7 @@ We also visualize the data in Figure \@ref(fig:predictors-results). The formulas
 
 ```{r predictors-results, fig.cap = "The *(a)* False Negatives value and *(b)* Accuracy percentage of different combinations of predictors", out.width = "80%"}
 
-knitr::include_graphics("../results/predictors_result.png")
+knitr::include_graphics(here("results/predictors_result.png"))
 ```
 
 # Model Selection & Verification
@@ -120,7 +122,7 @@ We now have to select the formula we want to use.
 For this, we mostly want high accuracy. If the accuracy is comparable, we want to make sure to choose the one with fewer false negatives. As we are aiming for a simple check-up, using all predictors (`diagnosis ~ .`) is not ideal, though yielding the highest accuracy. We pick `exercise_pain + age` because it has similar false negatives while having an accuracy that is similar to when using all predictors while being attributes that are easily examined.
 
 ```{r selected-model-formula-results}
-selected_formula_results <- readr::read_csv("../results/selected_formula_cv_result.csv")
+selected_formula_results <- readr::read_csv(here("results/selected_formula_cv_result.csv"))
 
 knitr::kable(selected_formula_results,
     caption = "The accuracy results for the selected formula compared with the `all predictors` version",
@@ -132,7 +134,7 @@ The chosen model uses `exercise pain` and `age` as predictor. Exercise pain can 
 We can now verify the model on the testing data.
 
 ```{r model-quality}
-model_quality <- readr::read_csv("../results/test_results.csv")
+model_quality <- readr::read_csv(here("results/test_results.csv"))
 accuracy <- model_quality$.estimate
 
 knitr::kable(model_quality,
@@ -146,7 +148,7 @@ Using this version, the rate for diagnosing sick patients as healthy is ~34%. Th
 
 ```{r classificaion-plot, fig.cap = "Fitting of data with `exercise pain` and `age` as predictors", out.width = "80%"}
 
-knitr::include_graphics("../results/final_classification_plot.png")
+knitr::include_graphics(here("results/final_classification_plot.png"))s
 ```
 
 Figure \@ref(fig:classificaion-plot) suggests that having any exercise-induced pain is more likely to be classified as sick regardless of age. However, the rigged areas in the graph suggests that there might have been outliers, confounding variables and/or over-fitting of the KNN model since we are not taking into considerations other factors that are highly interrelated to age or exercise pain.

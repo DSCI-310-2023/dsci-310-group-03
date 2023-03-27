@@ -17,16 +17,16 @@ Usage: src/model_selection_verification.R <data_dir> <results_dir> <out_dir>
 
 set.seed(1020)
 
-opt <- docopt(doc)
+opt <- docopt::docopt(doc)
 
 # Read in datafiles ------------------------------------------------------------
-two_predictors <- reader::read_csv(
+two_predictors <- readr::read_csv(
   paste0(opt$results_dir, "/model_formulas_result.csv")
 )
-testing_set <- reader::read_csv(
+testing_set <- readr::read_csv(
   paste0(opt$data_dir, "/transformed_testing_set.csv")
 )
-training_set <- reader::read_csv(
+training_set <- readr::read_csv(
   paste0(opt$data_dir, "/transformed_training_set.csv")
 )
 
@@ -48,23 +48,23 @@ write.csv(selected_formula_cv_result,
 )
 
 image_recipe <- recipes::recipe(diagnosis ~ exercise_pain + age, data = training_set) |>
-  recipes::step_scale(all_predictors()) |>
-  recipes::step_center(all_predictors())
+  recipes::step_scale(recipes::all_predictors()) |>
+  recipes::step_center(recipes::all_predictors())
 
 knn_spec <- parsnip::nearest_neighbor(weight_func = "rectangular", neighbors = 11) |>
   parsnip::set_engine("kknn") |>
   parsnip::set_mode("classification")
 
-knn_fit <- workflows::workflow() |>
+knn_ <- workflows::workflow() |>
   workflows::add_recipe(image_recipe) |>
   workflows::add_model(knn_spec) |>
-  fit(data = training_set)
+  parsnip::fit(data = training_set)
 
 # Determine model accuracy ----------------------------------------------------
 
 testing_set <- testing_set |> na.omit()
 
-predictions <- stats::predict(knn_fit, testing_set) |>
+predictions <- stats::predict(knn_, testing_set) |>
   dplyr::bind_cols(testing_set)
 
 final_quality <- predictions |>
@@ -90,13 +90,13 @@ x_grid <- c(
 
 y_grid <- min(cleveland$age):max(cleveland$age)
 
-ex_age_grid <- as_tibble(expand.grid(
+ex_age_grid <- tibble::as_tibble(expand.grid(
   exercise_pain = x_grid,
   age = y_grid
 ))
 
-# use the fit workflow to make predictions at the grid points
-knn_pred <- ipred::predict(knn_fit, ex_age_grid)
+# use the  workflow to make predictions at the grid points
+knn_pred <- stats::predict(knn_, ex_age_grid)
 
 # bind the predictions as a new column with the grid points
 prediction_table <- dplyr::bind_cols(knn_pred, ex_age_grid) |>
@@ -109,7 +109,7 @@ wkflw_plot <-
   ggplot2::ggplot() +
   ggplot2::geom_point(
     data = cleveland,
-    mapping = aes(
+    mapping = ggplot2::aes(
       x = exercise_pain,
       y = age,
       color = diagnosis
@@ -135,6 +135,6 @@ wkflw_plot <-
     labels = c("Healthy", "Sick"),
     values = c("steelblue2", "orange2")
   ) +
-  ggplot2::theme(text = element_text(size = 12))
+  ggplot2::theme(text = ggplot2::element_text(size = 12))
 
 ggplot2::ggsave(paste0(opt$out_dir, "/final_classification_plot.png"))
