@@ -25,32 +25,45 @@ The analysis can be run using 2 different ways:
 To maintain the reproducibility of this project, we use Docker container images to create the same computational environment that the project was created on. In order to run our analysis, please follow the steps listed below:
 1. Create an account and install DockerHub following the instruction [here](https://docs.docker.com/get-docker/)
 2. In your terminal, pull the lastest version of the Docker image
-    ```docker pull karlietr/dsci-310-group-03:latest```
+    ```
+    docker pull karlietr/dsci-310-group-03:latest
+    ```
 3. To run the analysis from the Docker container:
     - In terminal:
-    ```docker run --rm -it -v "/${PWD}:/home/jovyan/work" -p 8888:8888 karlietr/dsci-310-group-03:latest```
-    or
-    ```make docker```
-        - Troubleshooting:
-        If encounter *The input device is not a TTY* error, use
-        ```docker run --rm -i -v "/${PWD}:/home/jovyan/work" -p 8888:8888 karlietr/dsci-310-group-03:latest```
+    ```
+    docker run --rm -it -v "/${PWD}:/home/jovyan/work" -p 8888:8888 karlietr/dsci-310-group-03:latest
+    ```
+    - Troubleshooting: If encounter *The input device is not a TTY* error, use:
+    ```
+    docker run --rm -i -v "/${PWD}:/home/jovyan/work" -p 8888:8888 karlietr/dsci-310-group-03:latest
+    ```
  4. Navigate to the root folder `/work`, then open a terminal in the jupyter lab window, then in terminal:
-    ```make all```
+    ```
+    make all
+    ```
     Once the Makefile finish running, a results folder with all the figures and tables would be available as well as a html version of `heart_disease_analysis.Rmd` in the `doc` folder
 
 ### Running the analysis from local computer:
 To run this analysis in your local computer:
 1. Install all the packages listed in dependencies below.
 2. Clone this repository in your terminal:
-    ```git clone https://github.com/karlie-tr/dsci-310-group-03.git```
+    ```
+    git clone https://github.com/karlie-tr/dsci-310-group-03.git
+    ```
 3. To run the entire analysis from the beginning and render a html version of the analysis:
-   ```make all```
+   ```
+   make all
+   ```
 4. To clear all the results and reset to beginning:
-   ```make clean```
+   ```
+   make clean
+   ```
 5. To run only the analysis:
-   ```make analysis```
+   ```
+   make analysis
+   ```
    
-## Using Makefile
+### Using Makefile
 The make file can be used with the following commands:
 * `make all`: clear out previously produced output in the `results/` and `data/` folder, run analysis, and produce a html version of the Rmarkdown file; 
 run:
