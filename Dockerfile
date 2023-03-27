@@ -12,3 +12,4 @@ RUN Rscript -e "remotes::install_version('here', '1.0.1', repos = 'https://cloud
 RUN Rscript -e "remotes::install_version('bookdown', '0.21', repos = 'https://cloud.r-project.org')"
 RUN Rscript -e "remotes::install_version('knitr', '1.42', repos = 'https://cloud.r-project.org')"
 RUN Rscript -e "remotes::install_version('readr', '2.1.2', repos = 'https://cloud.r-project.org')
+

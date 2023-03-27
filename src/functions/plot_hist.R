@@ -73,7 +73,7 @@ plot_hist <- function(data,
   }
 
  plot_title <- cowplot::ggdraw() + 
-    cowplot::draw_label(title, fontface='bold')
+    cowplot::draw_label(title, fontface = 'bold')
  
   p <- cowplot::plot_grid(plotlist = plots,
                      ncol = col,

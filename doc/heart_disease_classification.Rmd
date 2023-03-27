@@ -1,0 +1,165 @@
+---
+title: 'DSCI 310: Diagnosing Heart Disease With Two Predictors'
+author: "Group 03: Hanzhang Cao, Karlie Truong, Kaylie Nguyen, Ser Jie Ng"
+date: "`r Sys.Date()`"
+output:
+  bookdown::html_document2:
+    toc: true
+    toc_float: true
+    fig_caption: true
+    number_sections: true
+  bookdown::pdf_document2:
+    toc: true
+    toc_float: true
+    fig_caption: true
+    number_sections: true
+bibliography: references.bib  
+---
+
+```{r set-up, include = FALSE}
+# hide code chunks
+knitr::opts_chunk$set(echo = FALSE,
+                      message = FALSE,
+                      warning = FALSE,
+                      fig.align = 'left',
+                      fig.pos = 'h')
+```
+
+# Introduction
+Cardiovascular disease is the leading cause of death worldwide [@heart-leading-cause-2020]. During 2020, the United States saw 690,882 deaths from this condition, compared to the 345,323 deaths from COVID-19 [@cdc-2022-heart]. There are several risk factors for developing heart disease, and the consequences of heart disease vary in severity. The risk of death increases when other comorbidities are present, including COVID-19 [@covid-cardio-2020]. Because this disease affects a large amount of the population, it puts significant strain on the healthcare system.
+
+We thus want to determine: Based on only two predictors gathered from health checkups performed by doctors, does somebody suffer from heart disease?
+
+# Data
+```{r raw-data}
+raw_data <- readr::read_csv("../data/raw/heart_disease_data.csv")
+```
+Heart disease data were sourced from [UCI Machine Learning Repository website](https://archive.ics.uci.edu/ml/datasets/Heart+Disease) [@uci-heart-2019]. Our data has `r nrow(raw_data)` rows and `r ncol(raw_data)` column which contains variables that relates to physical health as well as their diagnosis of cardiovascular disease.
+
+# Exploratory Data Analysis
+We want to get a first impression of the different predictors in the data set, thus we compare the mean values of the numerical variables (*see Table \@ref(tab:training-set-averages-table)*) and the distribution of the factorial attributes (*see Figure \@ref(fig:ratio-plot)*) for observations classified as sick and healthy.
+
+```{r training-set-averages-table}
+training_set_average_table <- readr::read_csv("../results/summary_averages.csv")
+
+knitr::kable(training_set_average_table, caption = "Average values of the numerical attributes", digits = 2)
+```
+
+```{r ratio-plot, fig.show = "hold", out.width = "80%", out.height = "70%", fig.cap = "The proportion of different values in each factorial attribute"}
+knitr::include_graphics("../results/numeric_plot.png")
+knitr::include_graphics("../results/categorical_plot.png")
+```
+
+As the mean values do not tell us much about the numerical variables, we also plot their histograms to visualize the distribution of the variables (*see Figure \@ref(fig:var-hist)*). We will use this later to choose the predictors we want to use.
+
+```{r var-hist, fig.cap = "The distribution of value of each attribute colored by diagnosis: *(a)* Serium Cholesterol; *(b)* Age; *(c)* Resting Blood Pressure; *(d)* Max Heart Rate; *(e)* Oldpeak; *(f)* Number of Colored Vessels", out.width = "80%"}
+knitr::include_graphics("../results/variables_histogram.png")
+```
+
+# Building & Optimizing Our Model
+We will use the k-nearest neighbor (KNN) algorithm for our data analysis [@timbers-2022-textbook]. KNN is a very well known classification algorithm, because it is very intuitive and does not make any major assumptions about the data. The only important requirement is that the distance between data points must represent their similarity. Furthermore, there are well-known ways to optimize a KNN model, which are implemented in the R library tidyverse, so it is easy to use.
+
+Our goal is to find the two best predictors for a KNN classification. However, taking all variables into account takes too long, so we exclude some, based on the exploration above: Based on Figure \@ref(fig:ratio-plot), `high blood sugar` did not show a significant increase between sick and healthy subjects. `Chest pain type` was removed from further analysis due to the initial study lacking documentation, as well as inconsistencies in the academic community for the terms and methods used to describe and categorize the types of chest pain. The academic community typically refers to only four types of angina: stable angina, unstable angina, microvascular angina, and vasospastic/variant angina [@angina-2022]. Therefore, it was challenging finding resources that properly described what abnormal angina was, as referenced in the original study. Additionally, `sex` as a predictor was excluded, as treating `sex` as binary is a topic we do not want to make a statement on.
+
+KNN does not work with non-numerical parameters, so we need to convert our factorial parameters to numerical values. `Exercise pain` is a binary variable, so we convert it to 0 if no exercise pain was reported, and 1 otherwise. `Slope` can be easily replaced with -1 for “down”, 0 for “flat”, or 1 for “up”. For better scaling of the parameters, `thal` and `resting ECG` values were replaced with non-standard numeric values; Normal was replaced with 0 and the non-normal values (i.e., symptomatic results) were either replaced with 4 or 5. We decided to use these values to represent that the abnormal states are versions of the same broader category.
+
+To optimize the model, we need to ensure that there are no NAs values in the training data. We document the number of rows we omit, to make sure that the model still provides sufficient information: Only roughly 2% of our observations contain NA values, so we can safely ignore them.
+
+To get a better grasp of the data set and be able to understand the following metrics, we also count the number of observations that are labeled as sick.
+
+We can see that roughly 46% of our data points are sick. KNN sometimes struggles if the different classes are not balanced. Since this is not the case here, we do not need to artificially balance the classes (for example with oversampling).
+
+Despite aiming for two predictors, we first want to build and optimize a model for all the predictors that have not been excluded so far. This allows us to have a reference for our two-predictor-models and lets us verify our model building.
+
+The choice of the parameter $k$ neighbors used has a lot of influence on the accuracy of the model. We apply cross-validation to optimize this parameter. Odd values of $k$ ranging from 1 to 30 are tested, since odd values have the advantage of not needing a tie-breaker during the KNN algorithm. Looking at more than every 7th data point would probably lead to underfitting [@timbers-2022-textbook]. As noted above, KNN needs data where the euclidean distances describe the similarity between the data points, thus it is important that the data set is scaled. This way the euclidean distances mimic the distance of the data points on a graph with linear axes.
+
+```{r cross-val-results}
+cv_results <- readr::read_csv("../results/cv_best_fit.csv")
+best_k <- cv_results$neighbors
+accuracy <- round(cv_results$mean, 2)
+
+knitr::kable(cv_results,
+    caption = "The cross-validation results for all predictors",
+    digits = 2)
+```
+
+Table \@ref(tab:cross-val-results) shows the optimal value of k for the `all predictors` model. We can see that $k$ = `r best_k` is the best choice, with an accuracy of `r accuracy`.
+
+However, we are not only interested in the accuracy, but also in the false negatives, as labeling someone as healthy who is actually sick is much more dangerous than the other way round. Since this information can not be extracted from the cross-validation, we train a KNN model with the chosen value of $k$ on the whole training set, and let it process the training set. As we are still building our model, the testing data can not be used for this purpose. We could also split our training data once more, a validation set which we would use to determine the false negative rate. However, this would make our false negative rate very dependent on this one random split. Thus, we decided against this second approach.
+
+Note that we can not and should not optimize our whole model for the lowest false negative rate, as always predicting “sick” would set this value to 0, and the resulting model would be worthless.
+
+
+```{r prediction-confusion-plot, fig.cap = "The Confusion Matrix for all predictors", out.width = "80%"}
+knitr::include_graphics("../results/conf_matrix_fig.png")
+```
+
+The resulting confusion matrix is shown in \@ref(fig:prediction-confusion-plot). The first column shows the observations that are actually healthy, the second one the ones that are healthy. The first row shows the observations that are predicted as healthy, with those predicted as sick in the second row. Thus, there are 105 people who are correctly determined as healthy, 79 who are correctly determined as sick, 23 who are labeled as healthy despite being sick (which is the bad case), and 14 that are labeled as sick despite being healthy.
+
+We now repeat the process described above for every subset of two predictors. We thereby track the predictors, the optimized value of $k$, the accuracy, and the number of false negatives. The resulting data are shown in Table \@ref(tab:model-formula-results).
+
+```{r model-formula-results}
+formula_results <- readr::read_csv("../results/model_formulas_result.csv")
+highest_accuracy <- round(formula_results$accuracy[1], 2)
+
+knitr::kable(formula_results,
+    caption = "The accuracy results for all tried formulas",
+    digits = 2)
+```
+
+We also visualize the data in Figure \@ref(fig:predictors-results). The formulas on the y axis can be read as follows: The words like `diagnosis`, `thal`, `old_peak` reference the corresponding variables; `~` can be read as “is predicted by”; `+` as “and”; and `.` as “all predictors”. Thus `diagnosis ~ .` means we take all the predictors (except the ones we excluded above, such as sex), and `diagnosis ~ thal + slope` means we use the two predictors `thal` and `slope` to predict the diagnosis.
+
+```{r predictors-results, fig.cap = "The *(a)* False Negatives value and *(b)* Accuracy percentage of different combinations of predictors", out.width = "80%"}
+
+knitr::include_graphics("../results/predictors_result.png")
+```
+
+# Model Selection & Verification
+We now have to select the formula we want to use.
+
+For this, we mostly want high accuracy. If the accuracy is comparable, we want to make sure to choose the one with fewer false negatives. As we are aiming for a simple check-up, using all predictors (`diagnosis ~ .`) is not ideal, though yielding the highest accuracy. We pick `exercise_pain + age` because it has similar false negatives while having an accuracy that is similar to when using all predictors while being attributes that are easily examined.
+
+```{r selected-model-formula-results}
+selected_formula_results <- readr::read_csv("../results/selected_formula_cv_result.csv")
+
+knitr::kable(selected_formula_results,
+    caption = "The accuracy results for the selected formula compared with the `all predictors` version",
+    digits = 2)
+```
+
+The chosen model uses `exercise pain` and `age` as predictor. Exercise pain can be evaluated by the patient doing exercises suggested by the doctor and recording any pain that has emerged. Furthermore, there is a very useful tool that doctors use called the exercise electrocardiogram. This can be done to determine the stress on the heart caused by exercising [@exercise-hsf].
+
+We can now verify the model on the testing data.
+
+```{r model-quality}
+model_quality <- readr::read_csv("../results/test_results.csv")
+accuracy <- model_quality$.estimate
+
+knitr::kable(model_quality,
+    caption = "The accuracy results for `exercise_pain` and `age` when tested against `testing_set`",
+    digits = 2)
+```
+
+Overall, the accuracy for our model is `r accuracy`, which is much lower than expected. This could have been due to only taking into account 2 predictor variables and randomization during the splitting process.
+
+Using this version, the rate for diagnosing sick patients as healthy is ~34%. This means that 3 out of 10 cases of heart disease are misdiagnosed. However, as this is a simple method for doctors to use as a signal to further monitor patients for risk of developing disease, the accuracy for this version may be acceptable. We can also plot the whole data set and the areas where new data points will be classified as sick or healthy (*see Figure \@ref(fig:classificaion-plot)*).
+
+```{r classificaion-plot, fig.cap = "Fitting of data with `exercise pain` and `age` as predictors", out.width = "80%"}
+
+knitr::include_graphics("../results/final_classification_plot.png")
+```
+
+Figure \@ref(fig:classificaion-plot) suggests that having any exercise-induced pain is more likely to be classified as sick regardless of age. However, the rigged areas in the graph suggests that there might have been outliers, confounding variables and/or over-fitting of the KNN model since we are not taking into considerations other factors that are highly interrelated to age or exercise pain.
+
+A research paper shows that older adults have a higher incidence of musculoskeletal pain especially chronic pain and are generally less physically active than younger adults [@association-2022]. However, the main reason is not due to aging but low physical activity and low wealth during their younger age. Another research [@age-2010] suggests that age does not affect the musculoskeletal and cardiovascular response to resistance and aerobic training in women. The elderly can exercise safely while having similar exercise intensity compared with the younger and the workload progression does not increase the risk of muscle incidence or injuries. In conclusion, both articles we found suggest that age does not directly affects exercise pain.
+
+# Discussion
+This analysis challenges some of the initial research done for this project. For example, cholesterol is typically considered highly correlated with heart disease [@cdc-2022-heart], however it appears not to be a strong predictor in this data set (*see Figure \@ref(fig:predictors-results)*); there is not a significant distribution difference between the sick and healthy population (*see Figure \@ref(fig:var-hist)*). On the other hand, exercise pain is a pretty good predictor for heart disease in this data set, which makes sense from a naive standpoint, as well as from the distribution of the data set (*see Figure \@ref(fig:ratio-plot)*).
+
+Beginning this project, we were optimistic about finding a model with high accuracy that could be used to predict heart disease. However, the highest accuracy found during this analysis was around `r highest_accuracy`. Ideally, this analysis would have revealed a set of predictors with an even higher accuracy. This might be due to confounding variables, the slight imbalance (*see \@ref(fig:classificaion-plot)*) and outliers within our data set.
+
+Our model offers a preliminary diagnosis, which helps healthcare professional to save time and medical costs when identifying high-risks population. Hence, age and exercise pain are appropriate predictors for this purpose as it is inexpensive, time-efficient and require minimal testing. Despite being a preliminary diagnosis tool for heart diseases, improvements such as taking confounding variables into account and/or using a bigger data set in future projects would help improve the model's accuracy.
+
+There are several open questions: Can our model be improved to diagnose the severity of heart disease in patients? Are we able to improve our accuracy and false negative rate by taking more predictors? Are there predictors that are less expensive but still achieve a similar accuracy? In our data set, most formulas with high accuracy involve expensive tests (*see Figure \@ref(fig:predictors-results)*). Lastly, is there a more effective and convenient predictor for diagnosing heart disease than the ones used in this analysis? One example for this might be a family history of heart diseases [@family-history-aha-2015].
+
+# References

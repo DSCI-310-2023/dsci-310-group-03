@@ -1,4 +1,4 @@
-source("../../R/average_numeric.R")
+source("../../src/functions/average_numeric.R")
 
 testthat::test_that("`avg_numeric` should return a data frame or 
                     data frame extension", {
