@@ -15,7 +15,7 @@ all:
 
 # Run the analysis 
 .PHONY: analysis
-analysis: results/numeric_plot.png results/categorical_plot.png results/variables_histogram.png results/cv_best_fit.csv results/conf_matrix_fig.png results/model_formulas_result.csv results/predictors_result.png results/selected_formula_cv_result.csv results/test_results.csv results/final_classification_plot.csv
+analysis: results/numeric_plot.png results/categorical_plot.png results/variables_histogram.png results/cv_best_fit.csv results/conf_matrix_fig.png results/model_formulas_result.csv results/predictors_result.png results/selected_formula_cv_result.csv results/test_results.csv results/final_classification_plot.png
 
 # load data
 data/raw/heart_disease_data.csv: src/01-download_data.R
@@ -58,7 +58,7 @@ results/selected_formula_cv_result.csv: data/processed/training_set.csv src/05-m
 results/test_results.csv: data/processed/training_set.csv data/processed/transformed_testing_set.csv src/05-model_selection_verification.R
 	Rscript src/05-model_selection_verification.R data/processed results results
 
-results/final_classification_plot.csv: data/processed/training_set.csv data/processed/transformed_testing_set.csv src/05-model_selection_verification.R
+results/final_classification_plot.png: data/processed/training_set.csv data/processed/transformed_testing_set.csv src/05-model_selection_verification.R
 	Rscript src/05-model_selection_verification.R data/processed results results
 
 
