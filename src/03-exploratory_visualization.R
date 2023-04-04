@@ -1,7 +1,7 @@
 "compare the mean values of the numerical variables and the distribution of the factorial variables for observations classified as sick and healthy.
 Plot the histograms to visualize the distribution of the variables.
 
-Usage: src/exploratory_visualization.R <input_dir> <out_dir>
+Usage: src/03-exploratory_visualization.R <input_dir> <out_dir>
 
 Options:
 <input_dir>		  Path (not including filename) to data

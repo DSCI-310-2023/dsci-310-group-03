@@ -1,7 +1,7 @@
 "Performs data cleaning, pre-processing and transforming for data (from https://raw.githubusercontent.com/karlie-tr/dataset_heart_disease/main/heart_disease_data.csv).
 Writes the training and test data to separate files.
 
-Usage: src/preprocess_data.r --input=<input> --out_train=<out_train> --out_transform_train=<out_transform_train> --out_transform_test=<out_transform_test>
+Usage: src/02-preprocess_data.r --input=<input> --out_train=<out_train> --out_transform_train=<out_transform_train> --out_transform_test=<out_transform_test>
   
 Options:
 --input=<input>                              Path (including filename) to raw data (csv file)

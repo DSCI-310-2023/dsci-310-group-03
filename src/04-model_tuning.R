@@ -4,11 +4,11 @@ combinations of predictors.
 
 Outputs:
 The best fit result from cross validation is saved as 'cv_best_fit.csv'
-The diagnosis prediction confusion matrix is saved as 'diagnosis_prediction_confusion.csv'
+The diagnosis prediction confusion matrix is saved as 'diagnosis_prediction_confusion.png'
 The results for different tried formulas is saved as 'model_formulas_result.csv'
 The plot for predictors results is saved as 'predictors_result.png'
 
-Usage: src/model_tuning.R <input_dir> <out_dir>
+Usage: src/04-model_tuning.R <input_dir> <out_dir>
 
 Options:
 <input_dir>		Path (not including filename) to data
@@ -35,10 +35,10 @@ image_recipe <- recipes::recipe(diagnosis ~ ., data = training_set) |>
   recipes::step_center(all_predictors())
 
 knn_fit <- build_model(training_set,
-                       image_recipe,
-                       optimal = "None",
-                       vfold = vfold,
-                       gridvals = gridvals
+  image_recipe,
+  optimal = "None",
+  vfold = vfold,
+  gridvals = gridvals
 )
 
 best_fit <- knn_fit |>
@@ -49,7 +49,7 @@ best_fit <- knn_fit |>
 optimal_k <- best_fit |> dplyr::pull(neighbors)
 
 write.csv(best_fit, paste0(opt$out_dir, "/cv_best_fit.csv"),
-          row.names = FALSE
+  row.names = FALSE
 )
 
 knn_fit <- build_model(training_set, image_recipe, "Yes", k = optimal_k)
@@ -75,7 +75,7 @@ ggplot2::ggsave(paste0(opt$out_dir, "/conf_matrix_fig.png"))
 
 # Plot accuracy of models that used different predictor pairs ------------------
 
-predictors <- training_set |> 
+predictors <- training_set |>
   dplyr::select(-diagnosis) |>
   colnames()
 
@@ -84,9 +84,9 @@ two_predictors <- tibble::tibble(
   formula = c("diagnosis ~ ."), k = c(optimal_k),
   accuracy = c(best_fit |> dplyr::pull(mean)),
   false_healthy = c(diagnosis_prediction_confusion |>
-                      broom::tidy() |>
-                      dplyr::filter(name == "cell_1_2") |>
-                      dplyr::pull(value))
+    broom::tidy() |>
+    dplyr::filter(name == "cell_1_2") |>
+    dplyr::pull(value))
 )
 
 for (i in 2:length(predictors)) {
@@ -96,42 +96,42 @@ for (i in 2:length(predictors)) {
       predictors[i], "+",
       predictors[j]
     )
-    
+
     print(model_string)
-    
+
     # find best k
     image_recipe <- recipes::recipe(as.formula(model_string),
-                                    data = training_set
+      data = training_set
     ) |>
       recipes::step_scale(all_predictors()) |>
       recipes::step_center(all_predictors())
-    
+
     knn_fit <- build_model(training_set,
-                           image_recipe,
-                           "None",
-                           vfold = vfold,
-                           gridvals = gridvals
+      image_recipe,
+      "None",
+      vfold = vfold,
+      gridvals = gridvals
     )
-    
+
     best_fit <- knn_fit |>
       dplyr::filter(.metric == "accuracy") |>
       dplyr::arrange(desc(mean)) |>
       dplyr::slice(1)
-    
+
     optimal_k <- best_fit |> dplyr::pull(neighbors)
-    
+
     # train
     knn_fit <- build_model(training_set, image_recipe, "Yes", k = optimal_k)
-    
+
     predictions <- stats::predict(knn_fit, training_set) |>
       dplyr::bind_cols(training_set)
-    
+
     predictions$diagnosis <- as.factor(predictions$diagnosis)
-    
+
     diagnosis_prediction_confusion <- predictions |>
       yardstick::conf_mat(truth = diagnosis, estimate = .pred_class) |>
       broom::tidy()
-    
+
     two_predictors <- two_predictors |>
       tibble::add_row(
         formula = model_string,
@@ -148,7 +148,8 @@ two_predictors <- two_predictors |> dplyr::arrange(desc(accuracy))
 
 # save results
 write.csv(two_predictors, paste0(opt$out_dir, "/model_formulas_result.csv"),
-          row.names = FALSE)
+  row.names = FALSE
+)
 
 # plot accuracy and false healthy data
 plot_acc <- two_predictors |>
@@ -173,16 +174,16 @@ title <- cowplot::ggdraw() +
   )
 
 plot <- cowplot::plot_grid(plot_false,
-                           plot_acc,
-                           ncol = 2,
-                           labels = "AUTO",
-                           align = "h"
+  plot_acc,
+  ncol = 2,
+  labels = "AUTO",
+  align = "h"
 )
 
 plot_with_title <- cowplot::plot_grid(title,
-                                      plot,
-                                      ncol = 1,
-                                      rel_heights = c(0.025, 1)
+  plot,
+  ncol = 1,
+  rel_heights = c(0.025, 1)
 )
 
 ggplot2::ggsave(paste0(opt$out_dir, "/predictors_result.png"))
