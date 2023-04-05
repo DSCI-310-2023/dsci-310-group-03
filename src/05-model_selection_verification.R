@@ -4,9 +4,9 @@ Outputs:
 A csv file showing the accuracy result for selected formula, saved as 'selected_formula_cv_result.csv'
 A csv file for accuracy results and confusion matrix for the selected formula on the testing set,
 saved as 'test_results.csv'
-A plot showing the domains of classification for the final model, saved as 'final_classification_plot.csv'
+A plot showing the domains of classification for the final model, saved as 'final_classification_plot.png'
 
-Usage: src/model_selection_verification.R <data_dir> <results_dir> <out_dir>
+Usage: src/05-model_selection_verification.R <data_dir> <results_dir> <out_dir>
 
 <data_dir>		  Path (not including filename) to data
 <results_dir>   Path to directory where the model results are found

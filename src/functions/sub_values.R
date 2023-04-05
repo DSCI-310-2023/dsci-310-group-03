@@ -5,14 +5,28 @@
 #' @param replacement a string
 #' @param original a string
 #'
-#' @result the new column with the replaced values
+#' @return A vector of the new column with the replaced values
+#' @export
 #'
-#' @example
-#'  sub_values(iris, Species, 'replaced_Setosa', 'setosa')
+#' @examples
+#' sub_values(iris, Species, "replaced_Setosa", "setosa")
 
-sub_values <- function(data, column, replacement, original) {
+sub_values <- function(dataset, column, replacement, original) {
+  if (!is.data.frame(dataset)) {
+    stop("`dataset` should be a data frame or data frame extension")
+  }
+
+  col_name <- deparse(substitute(column))
+  cols <- colnames(dataset)
+
+  if (!(col_name %in% cols)) {
+    stop(paste("'", col_name, "'", " does not exist in this data frame",
+      sep = ""
+    ))
+  }
+
   new_data <-
-    data |>
+    dataset |>
     dplyr::mutate({{ column }} := sub(original, replacement, {{ column }})) |>
     dplyr::mutate_if(is.character, as.factor)
   new_column <- dplyr::pull(new_data, {{ column }})

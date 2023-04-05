@@ -144,21 +144,21 @@ knitr::kable(model_quality,
 
 Overall, the accuracy for our model is `r accuracy`, which is much lower than expected. This could have been due to only taking into account 2 predictor variables and randomization during the splitting process.
 
-Using this version, the rate for diagnosing sick patients as healthy is ~34%. This means that 3 out of 10 cases of heart disease are misdiagnosed. However, as this is a simple method for doctors to use as a signal to further monitor patients for risk of developing disease, the accuracy for this version may be acceptable. We can also plot the whole data set and the areas where new data points will be classified as sick or healthy (*see Figure \@ref(fig:classificaion-plot)*).
+Using this version, the rate for diagnosing sick patients as healthy is ~34%. This means that 3 out of 10 cases of heart disease are misdiagnosed. However, as this is a simple method for doctors to use as a signal to further monitor patients for risk of developing disease, the accuracy for this version may be acceptable. We can also plot the whole data set and the areas where new data points will be classified as sick or healthy (*see Figure \@ref(fig:classification-plot)*).
 
-```{r classificaion-plot, fig.cap = "Fitting of data with `exercise pain` and `age` as predictors", out.width = "80%"}
+```{r classification-plot, fig.cap = "Fitting of data with `exercise pain` and `age` as predictors", out.width = "80%"}
 
-knitr::include_graphics(here("results/final_classification_plot.png"))s
+knitr::include_graphics(here("results/final_classification_plot.png"))
 ```
 
-Figure \@ref(fig:classificaion-plot) suggests that having any exercise-induced pain is more likely to be classified as sick regardless of age. However, the rigged areas in the graph suggests that there might have been outliers, confounding variables and/or over-fitting of the KNN model since we are not taking into considerations other factors that are highly interrelated to age or exercise pain.
+Figure \@ref(fig:classification-plot) suggests that having any exercise-induced pain is more likely to be classified as sick regardless of age. However, the rigged areas in the graph suggests that there might have been outliers, confounding variables and/or over-fitting of the KNN model since we are not taking into considerations other factors that are highly interrelated to age or exercise pain.
 
 A research paper shows that older adults have a higher incidence of musculoskeletal pain especially chronic pain and are generally less physically active than younger adults [@association-2022]. However, the main reason is not due to aging but low physical activity and low wealth during their younger age. Another research [@age-2010] suggests that age does not affect the musculoskeletal and cardiovascular response to resistance and aerobic training in women. The elderly can exercise safely while having similar exercise intensity compared with the younger and the workload progression does not increase the risk of muscle incidence or injuries. In conclusion, both articles we found suggest that age does not directly affects exercise pain.
 
 # Discussion
 This analysis challenges some of the initial research done for this project. For example, cholesterol is typically considered highly correlated with heart disease [@cdc-2022-heart], however it appears not to be a strong predictor in this data set (*see Figure \@ref(fig:predictors-results)*); there is not a significant distribution difference between the sick and healthy population (*see Figure \@ref(fig:var-hist)*). On the other hand, exercise pain is a pretty good predictor for heart disease in this data set, which makes sense from a naive standpoint, as well as from the distribution of the data set (*see Figure \@ref(fig:ratio-plot)*).
 
-Beginning this project, we were optimistic about finding a model with high accuracy that could be used to predict heart disease. However, the highest accuracy found during this analysis was around `r highest_accuracy`. Ideally, this analysis would have revealed a set of predictors with an even higher accuracy. This might be due to confounding variables, the slight imbalance (*see \@ref(fig:classificaion-plot)*) and outliers within our data set.
+Beginning this project, we were optimistic about finding a model with high accuracy that could be used to predict heart disease. However, the highest accuracy found during this analysis was around `r highest_accuracy`. Ideally, this analysis would have revealed a set of predictors with an even higher accuracy. This might be due to confounding variables, the slight imbalance (*see \@ref(fig:classification-plot)*) and outliers within our data set.
 
 Our model offers a preliminary diagnosis, which helps healthcare professional to save time and medical costs when identifying high-risks population. Hence, age and exercise pain are appropriate predictors for this purpose as it is inexpensive, time-efficient and require minimal testing. Despite being a preliminary diagnosis tool for heart diseases, improvements such as taking confounding variables into account and/or using a bigger data set in future projects would help improve the model's accuracy.
 

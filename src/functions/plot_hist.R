@@ -1,6 +1,4 @@
-#' Abstraction of histograms for factorial variables
-#'
-#' Create a general function to remove repetitive ggplot functions
+#' Generate histograms for factorial variables
 #'
 #' @param data the data frame
 #' @param class_column the groups that we are going to grouped the variables by
@@ -12,6 +10,7 @@
 #'
 #' @return A histogram of all numeric variables that is
 #'         grouped by the class_Column
+#' @export
 #'
 #' @examples
 #' plot_hist(iris, Species, title = "Histogram")
@@ -23,11 +22,10 @@ plot_hist <- function(data,
                       bins = 20,
                       col = 2,
                       title) {
-  
   if (!is.character(title)) {
     stop("`title` should be a string")
   }
-  
+
   # Create a new empty list
   plots <- list()
 
@@ -36,7 +34,7 @@ plot_hist <- function(data,
     dplyr::select_if(is.numeric) |>
     colnames()
 
-  # Create a dataframe with only numeric columns and class_column
+  # Create a data frame with only numeric columns and class_column
   numeric_df <- data |>
     dplyr::select(any_of(numeric_col), {{ class_column }}) |>
     as.data.frame()
@@ -47,7 +45,7 @@ plot_hist <- function(data,
       numeric_df,
       {{ class_column }}
     )
-    
+
     plots[[i]] <- local({
       i <- i
       histogram <- data |>
@@ -61,9 +59,10 @@ plot_hist <- function(data,
         ) +
         ggplot2::labs(
           x = gsub(sep,
-                   " ",
-                   colnames(numeric_df)[i],
-                   fixed = TRUE),
+            " ",
+            colnames(numeric_df)[i],
+            fixed = TRUE
+          ),
           y = "Frequency",
           fill = colnames(numeric_df)[length(numeric_df)]
         ) +
@@ -72,19 +71,21 @@ plot_hist <- function(data,
     })
   }
 
- plot_title <- cowplot::ggdraw() + 
-    cowplot::draw_label(title, fontface = 'bold')
- 
-  p <- cowplot::plot_grid(plotlist = plots,
-                     ncol = col,
-                     labels = "auto",
-                     label_size = 10)
+  plot_title <- cowplot::ggdraw() +
+    cowplot::draw_label(title, fontface = "bold")
+
+  p <- cowplot::plot_grid(
+    plotlist = plots,
+    ncol = col,
+    labels = "auto",
+    label_size = 10
+  )
 
   # return the arranged plots with labels
-  return(cowplot::plot_grid(plot_title, 
-                            p, 
-                            ncol = 1,
-                            rel_heights = c(0.25, 1),
-                            align = "vh"))
-  }
-
+  return(cowplot::plot_grid(plot_title,
+    p,
+    ncol = 1,
+    rel_heights = c(0.25, 1),
+    align = "vh"
+  ))
+}
