@@ -31,3 +31,4 @@ grouped_by_grades_output <- grade_df |>
   dplyr::select_if(is.numeric) |>
   dplyr::summarize_all(mean, na = TRUE)|>
   as.data.frame()
+
