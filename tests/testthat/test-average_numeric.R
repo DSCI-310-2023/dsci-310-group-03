@@ -61,7 +61,7 @@ testthat::test_that("`class_col` can be either a factorial class
   testthat::expect_no_error(avg_numeric(grade_df, final_grade))
 })
 
-testthat::test_that("`avg_numeric should return a data frame or
+testthat::test_that("`avg_numeric` should return a data frame or
                     data frame extension that computes the averages of variables
                     grouped by `class_col`", {
   testthat::expect_equal(
