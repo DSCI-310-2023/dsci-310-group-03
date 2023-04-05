@@ -30,23 +30,28 @@ To maintain the reproducibility of this project, we use Docker container images 
     ```
 3. To run the analysis from the Docker container:
     - In terminal:
-    ```
-    docker run --rm -it -v "/${PWD}:/home/rstudio/project" -p 8787:8787 -e PASSWORD=password karlietr/dsci-310-group-03:latest
-    ```
-4. In our prefer browser, go to
-    ```
-    localhost:8787
-    ```
-    Then, log in using the following credentials:
-    ```
-    username: rstudio
-    password: password
-    ```
-5. Navigate to the root folder `/project`, then open a terminal in the Rstudio window, then in terminal:
+        ```
+        docker run --rm -it -v "/${PWD}:/home/rstudio/project" -p 8787:8787 -e PASSWORD=password karlietr/dsci-310-group-03:latest
+        ```
+        **Troubleshooting**: When encounter `Port already allocated` error, switch `8787:8787` to `xxxx:8787` where `xxxx` is a combination of any 4 numbers
+    - In your prefer browser, go to
+        ```
+        localhost:8787
+        ```
+        Then, log in using the following credentials:
+        ```
+        username: rstudio
+        password: password
+        ```
+4. Navigate to the root folder `/project`, then open a terminal in the Rstudio window, then in terminal:
     ```
     make all
     ```
     Once the Makefile finish running, a results folder with all the figures and tables would be available as well as a html version of `heart_disease_analysis.Rmd` in the `doc` folder
+
+
+    
+
 
 ### Running the analysis from local computer:
 To run this analysis in your local computer:
