@@ -1,12 +1,13 @@
 #' Compute averages of numeric factors
 #'
-#' Function to compare the mean values of the numerical attributes
+#' @param dataset A data frame 
+#' @param class_col The name of the column to group by
 #'
-#' @param dataset the training set with a list of numerical attributes
-#' @param class_col the name for the column to group by
+#' @return A data frame that contains the mean values of all numerical variables
+#' @export
 #'
-#' @example
-#' avg_numeric(iris,Species)
+#' @examples
+#'  avg_numeric(iris,Species)
 
 avg_numeric <- function(dataset, class_col) {
   
