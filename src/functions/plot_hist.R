@@ -15,6 +15,7 @@
 #' @examples
 #' plot_hist(iris, Species, title = "Histogram")
 #' plot_hist(iris, Species, binwidth = 0.25, col = 3, title = "Histogram")
+
 plot_hist <- function(data,
                       class_column,
                       sep = ".",
