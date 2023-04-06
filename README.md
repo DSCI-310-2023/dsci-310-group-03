@@ -104,6 +104,7 @@ The make file can be used with the following commands:
 |here|1.0.1|
 |bookdown|0.19|
 |reader|1.0.6|
+|ConfusionTableR|4.2.3|
 
 ## License Information
 Our project uses the MIT open source license.

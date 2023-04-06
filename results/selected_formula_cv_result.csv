@@ -1,3 +1,0 @@
-"formula","k","accuracy","false_healthy"
-"diagnosis ~ .",11,0.832285647169368,19
-"diagnosis ~ exercise_pain + age",23,0.755095137420719,23
