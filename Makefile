@@ -46,12 +46,15 @@ results/variables_histogram.png: data/processed/training_set.csv src/03-explorat
 
 # Model building
 .PHONY: build-model
-build-model: results/cv_best_fit.csv results/conf_matrix_fig.png results/model_formulas_result.csv results/predictors_result.png
+build-model: results/cv_best_fit.csv results/conf_matrix_fig.png results/conf_matrix_table.csv results/model_formulas_result.csv results/predictors_result.png
 
 results/cv_best_fit.csv: data/processed/training_set.csv src/04-model_tuning.R
 	Rscript src/04-model_tuning.R data/processed results
 
 results/conf_matrix_fig.png: data/processed/training_set.csv src/04-model_tuning.R
+	Rscript src/04-model_tuning.R data/processed results
+
+results/conf_matrix_table.csv: data/processed/training_set.csv src/04-model_tuning.R
 	Rscript src/04-model_tuning.R data/processed results
 
 results/model_formulas_result.csv: data/processed/training_set.csv src/04-model_tuning.R

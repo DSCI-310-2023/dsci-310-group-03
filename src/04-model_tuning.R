@@ -17,6 +17,8 @@ Options:
 
 # Set up -----------------------------------------------------------------------
 
+library(ConfusionTableR)
+
 set.seed(1020)
 
 source(here::here("src/functions/build_model.R"))
@@ -66,12 +68,17 @@ diagnosis_prediction_confusion <- diagnosis_test_predictions |>
   yardstick::conf_mat(truth = diagnosis, estimate = .pred_class)
 
 # plot confusion matrix for predictions
-conf_matrix_fig <-
+conf_matrix <-
   ggplot2::autoplot(diagnosis_prediction_confusion, type = "heatmap") +
   ggplot2::scale_fill_gradient(low = "#D6EAF8", high = "#2E86C1") +
   ggplot2::ggtitle("Heat Map Of The Confusion Matrix for All Predictors")
 
 ggplot2::ggsave(paste0(opt$out_dir, "/conf_matrix_fig.png"))
+
+conf_matrix_table <- ConfusionTableR::binary_class_cm(diagnosis_test_predictions$.pred_class, diagnosis_test_predictions$diagnosis)
+conf_matrix_table <- conf_matrix_table$cm_tbl
+
+write.csv(conf_matrix_table, paste0(opt$out_dir, "/conf_matrix_table.csv"))
 
 # Plot accuracy of models that used different predictor pairs ------------------
 
