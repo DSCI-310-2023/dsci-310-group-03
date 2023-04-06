@@ -23,7 +23,7 @@ analysis:
 load-data: data/raw/heart_disease_data.csv data/processed/training_set.csv data/processed/transformed_training_set.csv data/processed/transformed_testing_set.csv
 
 data/raw/heart_disease_data.csv: src/01-download_data.R
-	Rscript src/01-download_data.R --url=https://raw.githubusercontent.com/karlie-tr/dataconset_heart_disease/main/heart_disease_data.csv --out_file=data/raw/heart_disease_data.csv
+	Rscript src/01-download_data.R --url=https://raw.githubusercontent.com/karlie-tr/dataset_heart_disease/main/heart_disease_data.csv --out_file=data/raw/heart_disease_data.csv
 
 data/processed/training_set.csv data/processed/transformed_training_set.csv data/processed/transformed_testing_set.csv: data/raw/heart_disease_data.csv src/02-preprocess_data.R
 	Rscript src/02-preprocess_data.R --input=data/raw/heart_disease_data.csv --out_train=data/processed/training_set.csv --out_transform_train=data/processed/transformed_training_set.csv --out_transform_test=data/processed/transformed_testing_set.csv
