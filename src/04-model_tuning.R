@@ -66,12 +66,13 @@ diagnosis_prediction_confusion <- diagnosis_test_predictions |>
   yardstick::conf_mat(truth = diagnosis, estimate = .pred_class)
 
 # plot confusion matrix for predictions
-conf_matrix_fig <-
+conf_matrix <-
   ggplot2::autoplot(diagnosis_prediction_confusion, type = "heatmap") +
   ggplot2::scale_fill_gradient(low = "#D6EAF8", high = "#2E86C1") +
   ggplot2::ggtitle("Heat Map Of The Confusion Matrix for All Predictors")
 
-ggplot2::ggsave(paste0(opt$out_dir, "/conf_matrix_fig.png"))
+#ggplot2::ggsave(paste0(opt$out_dir, "/conf_matrix_fig.png"))
+write.csv(conf_matrix, paste0(opt$out_dir, "/conf_matrix.csv"))
 
 # Plot accuracy of models that used different predictor pairs ------------------
 
