@@ -21,9 +21,6 @@ If you see possible improvements of the project,
 please open up an issue [here](https://github.com/karlie-tr/dsci-310-group-03-pkg/issues). 
 Explain the suggestion and include additional details:
 
-* Point out which aspect of the project could be improved: 
-- data analysis 
-- code reviews
-- reproducibility
+* Point out which aspect of the project could be improved: data analysis, code reviews, reproducibility, etc
 * Provide examples if possible
 * For suggestions refering to the functions and package, please refer to our package repository [here](https://github.com/karlie-tr/dsci-310-group-03-pkg/tree/main)
