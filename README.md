@@ -31,7 +31,7 @@ To maintain the reproducibility of this project, we use Docker container images 
 3. To run the analysis from the Docker container:
     - In terminal, you can run the Docker Container in 2 ways:
         ```
-        docker run --rm -it -v "/${PWD}:/home/rstudio/project" -p 8787:8787 -e PASSWORD=password karlietr/dsci-310-group-03:latest
+        docker run --rm -it -v "/${PWD}:/home/rstudio" -p 8787:8787 -e PASSWORD=password karlietr/dsci-310-group-03:latest
         ```
         **Troubleshooting**: When encounter `Port already allocated` error, switch `8787:8787` to `xxxx:8787` where `xxxx` is a combination of any 4 numbers
 
@@ -49,7 +49,7 @@ To maintain the reproducibility of this project, we use Docker container images 
         username: rstudio
         password: password
         ```
-4. Navigate to the root folder `/project`, then open a terminal in the Rstudio window, then in terminal:
+4. Open a terminal in the Rstudio window, then run the analysis using:
     ```
     make all
     ```
@@ -104,6 +104,13 @@ The make file can be used with the following commands:
 |here|1.0.1|
 |bookdown|0.19|
 |reader|1.0.6|
+|ConfusionTableR|1.0.4|
+|rsample|0.0.8|
+|recipes|0.1.15|
+|parsnip|0.1.3|
+|yardstick|0.0.6|
+|broom|0.7.3|
+|tune|0.2.0|
 
 ## License Information
 Our project uses the MIT open source license.
