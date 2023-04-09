@@ -15,9 +15,6 @@ data/processed/training_set.csv data/processed/testing_set.csv: src/preprocess_d
 
 " -> doc
 
-source(here::here("src/functions/load_data.R"))
-source(here::here("src/functions/sub_values.R"))
-
 set.seed(1020)
 
 opt <- docopt::docopt(doc)
@@ -33,7 +30,7 @@ main <- function(input, out_train, out_transform_train, out_transform_test) {
     "thal", "diagnosis", "diagnosis_2"
   )
 
-  cleveland <- load_data(input,
+  cleveland <- group03package::load_data(input,
     names = column_names,
     separator = ",",
     na_values = "?"
@@ -42,17 +39,17 @@ main <- function(input, out_train, out_transform_train, out_transform_test) {
 
   # replace values in dataframe for readability
   high_blood_sugar_vec <-
-    sub_values(cleveland, high_blood_sugar,
+    group03package::sub_values(cleveland, high_blood_sugar,
       replacement = "true", original = "TRUE"
     )
 
   exercise_pain_vec <-
-    sub_values(cleveland, exercise_pain,
+    group03package::sub_values(cleveland, exercise_pain,
       replacement = "true", original = "TRUE"
     )
 
   diagnosis_vec <-
-    sub_values(cleveland, diagnosis,
+    group03package::sub_values(cleveland, diagnosis,
       replacement = "healthy", original = "buff"
     )
 

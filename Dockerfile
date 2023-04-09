@@ -19,3 +19,5 @@ RUN Rscript -e "remotes::install_version('parsnip', '0.1.3', repos = 'https://cl
 RUN Rscript -e "remotes::install_version('yardstick', '0.0.6', repos = 'https://cloud.r-project.org')"
 RUN Rscript -e "remotes::install_version('broom', '0.7.3', repos = 'https://cloud.r-project.org')"
 RUN Rscript -e "remotes::install_version('tune', '0.2.0', repos = 'https://cloud.r-project.org')"
+
+RUN Rscript -e "remotes::install_github('karlie-tr/dsci-310-group-03-pkg', force = TRUE)"
