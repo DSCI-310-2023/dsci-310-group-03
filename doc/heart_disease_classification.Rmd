@@ -95,8 +95,15 @@ Note that we can not and should not optimize our whole model for the lowest fals
 ```{r prediction-confusion-plot, fig.cap = "The Confusion Matrix for all predictors", out.width = "80%"}
 knitr::include_graphics(here("results/conf_matrix_fig.png"))
 ```
+```{r prediction_confusion_table, include=FALSE}
+conf_matrix_table <- readr::read_csv(here("results/conf_matrix_table.csv"))
+pred_healthy_ref_healthy <- conf_matrix_table$Freq[1]
+pred_sick_ref_healthy <- conf_matrix_table$Freq[2]
+pred_healthy_ref_sick <- conf_matrix_table$Freq[3]
+pred_sick_ref_sick <- conf_matrix_table$Freq[4]
+```
 
-The resulting confusion matrix is shown in \@ref(fig:prediction-confusion-plot). The first column shows the observations that are actually healthy, the second one the ones that are healthy. The first row shows the observations that are predicted as healthy, with those predicted as sick in the second row. Thus, there are 105 people who are correctly determined as healthy, 79 who are correctly determined as sick, 23 who are labeled as healthy despite being sick (which is the bad case), and 14 that are labeled as sick despite being healthy.
+The resulting confusion matrix is shown in \@ref(fig:prediction-confusion-plot). The first column shows the observations that are actually healthy, the second one the ones that are healthy. The first row shows the observations that are predicted as healthy, with those predicted as sick in the second row. Thus, there are `r pred_healthy_ref_healthy` people who are correctly determined as healthy, `r pred_sick_ref_sick` who are correctly determined as sick, `r pred_healthy_ref_sick` who are labeled as healthy despite being sick (which is the bad case), and `r pred_sick_ref_healthy` that are labeled as sick despite being healthy.
 
 We now repeat the process described above for every subset of two predictors. We thereby track the predictors, the optimized value of $k$, the accuracy, and the number of false negatives. The resulting data are shown in Table \@ref(tab:model-formula-results).
 
