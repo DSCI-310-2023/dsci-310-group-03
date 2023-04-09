@@ -19,8 +19,6 @@ Options:
 
 set.seed(1020)
 
-source(here::here("src/functions/build_model.R"))
-
 opt <- docopt::docopt(doc)
 
 # Load data --------------------------------------------------------------------
@@ -34,7 +32,7 @@ image_recipe <- recipes::recipe(diagnosis ~ ., data = training_set) |>
   recipes::step_scale(all_predictors()) |>
   recipes::step_center(all_predictors())
 
-knn_fit <- build_model(training_set,
+knn_fit <- group03package::build_model(training_set,
   image_recipe,
   optimal = "None",
   vfold = vfold,
@@ -52,7 +50,7 @@ write.csv(best_fit, paste0(opt$out_dir, "/cv_best_fit.csv"),
   row.names = FALSE
 )
 
-knn_fit <- build_model(training_set, image_recipe, "Yes", k = optimal_k)
+knn_fit <- group03package::build_model(training_set, image_recipe, "Yes", k = optimal_k)
 
 # Predicting the training set --------------------------------------------------
 diagnosis_test_predictions <- stats::predict(knn_fit, training_set) |>
@@ -106,7 +104,7 @@ for (i in 2:length(predictors)) {
       recipes::step_scale(all_predictors()) |>
       recipes::step_center(all_predictors())
 
-    knn_fit <- build_model(training_set,
+    knn_fit <- group03package::build_model(training_set,
       image_recipe,
       "None",
       vfold = vfold,
@@ -121,7 +119,7 @@ for (i in 2:length(predictors)) {
     optimal_k <- best_fit |> dplyr::pull(neighbors)
 
     # train
-    knn_fit <- build_model(training_set, image_recipe, "Yes", k = optimal_k)
+    knn_fit <- group03package::build_model(training_set, image_recipe, "Yes", k = optimal_k)
 
     predictions <- stats::predict(knn_fit, training_set) |>
       dplyr::bind_cols(training_set)

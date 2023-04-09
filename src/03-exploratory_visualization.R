@@ -10,16 +10,13 @@ Options:
 
 set.seed(1020)
 
-source(here::here("src/functions/average_numeric.R"))
-source(here::here("src/functions/plot_hist.R"))
-
 opt <- docopt::docopt(doc)
 
 # Load dataset ------------------------------------------------------------
 training_set <- read.csv(paste0(opt$input_dir, "/training_set.csv"))
 
 # Compute mean of the numerical attributes --------------------------------
-summary_averages <- avg_numeric(training_set, diagnosis)
+summary_averages <- group03package::avg_numeric(training_set, diagnosis)
 
 write.csv(summary_averages, paste0(opt$out_dir, "/summary_averages.csv"),
   row.names = FALSE
@@ -72,7 +69,7 @@ ggplot2::ggsave(paste0(opt$out_dir, "/categorical_plot.png"),
 )
 
 # Generate histograms for all numeric variables --------------------------------
-variables_histogram <- plot_hist(
+variables_histogram <- group03package::plot_hist(
   training_set,
   diagnosis,
   col = 3,
