@@ -76,7 +76,7 @@ results/test_results.csv: data/processed/training_set.csv data/processed/transfo
 results/final_classification_plot.png: data/processed/training_set.csv data/processed/transformed_testing_set.csv src/05-model_selection_verification.R
 	Rscript src/05-model_selection_verification.R data/processed results results
 
-# Render report n html format
+# Render reports in both html and pdf format
 .PHONY: report
 report: 
 	Rscript -e "rmarkdown::render('doc/heart_disease_classification.Rmd', output_dir = here::here('doc'))"
