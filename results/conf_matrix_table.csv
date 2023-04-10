@@ -1,0 +1,5 @@
+"","PredLabel","Freq"
+"1","Pred_healthy_Ref_healthy",106
+"2","Pred_sick_Ref_healthy",13
+"3","Pred_healthy_Ref_sick",19
+"4","Pred_sick_Ref_sick",83
