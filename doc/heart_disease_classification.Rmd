@@ -9,10 +9,7 @@ output:
     fig_caption: true
     number_sections: true
   bookdown::pdf_document2:
-    toc: true
-    toc_float: true
-    fig_caption: true
-    number_sections: true
+    default
 bibliography: references.bib  
 ---
 
