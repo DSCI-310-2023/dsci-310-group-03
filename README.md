@@ -17,7 +17,7 @@ The data analysis report can be found [here](https://github.com/karlie-tr/dsci-3
 
 ## Usage
 In your terminal, navigate to the folder where you want to store the project then clone it project into your local computer 
-    ```git clone https://github.com/karlie-tr/dsci-310-group-03.git```
+    ```git clone https://github.com/DSCI-310/dsci-310-group-03.git```
 Once the git repository is on your computer, navigate into the folder with:
     ```cd dsci-310-group-03```
 The analysis can be run using 2 different ways:
