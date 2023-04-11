@@ -61,7 +61,7 @@ To run this analysis in your local computer:
 1. Install all the packages listed in dependencies below.
 2. Clone this repository in your terminal:
     ```
-    git clone https://github.com/karlie-tr/dsci-310-group-03.git
+    git clone https://github.com/DSCI-310/dsci-310-group-03.git)
     ```
 3. To run the entire analysis from the beginning and render a html version of the analysis:
    ```
