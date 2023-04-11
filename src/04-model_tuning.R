@@ -182,13 +182,13 @@ plot <- cowplot::plot_grid(plot_false,
   plot_acc,
   ncol = 2,
   labels = "AUTO",
-  align = "h"
+  rel_widths = c(1, 0.5)
 )
 
 plot_with_title <- cowplot::plot_grid(title,
   plot,
   ncol = 1,
-  rel_heights = c(0.025, 1)
+  rel_heights = c(0.125, 1)
 )
 
 ggplot2::ggsave(paste0(opt$out_dir, "/predictors_result.png"))
