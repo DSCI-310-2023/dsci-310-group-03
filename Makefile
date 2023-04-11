@@ -76,12 +76,10 @@ results/test_results.csv: data/processed/training_set.csv data/processed/transfo
 results/final_classification_plot.png: data/processed/training_set.csv data/processed/transformed_testing_set.csv src/05-model_selection_verification.R
 	Rscript src/05-model_selection_verification.R data/processed results results
 
-# Render reports in both html and pdf format
+# Render reports in both html format
 .PHONY: report
 report: 
 	Rscript -e "rmarkdown::render('doc/heart_disease_classification.Rmd', output_dir = here::here('doc'))"
-	Rscript -e "rmarkdown::render('doc/heart_disease_classification.Rmd', output_dir = here::here('doc'), output_format = 'pdf_document')"
-	rm -f doc/*.log
   
 # Delete the generated data, plots, and tables
 .PHONY: clean
