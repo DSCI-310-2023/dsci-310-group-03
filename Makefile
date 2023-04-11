@@ -80,8 +80,6 @@ results/final_classification_plot.png: data/processed/training_set.csv data/proc
 .PHONY: report
 report: 
 	Rscript -e "rmarkdown::render('doc/heart_disease_classification.Rmd', output_dir = here::here('doc'))"
-	Rscript -e "rmarkdown::render('doc/heart_disease_classification.Rmd', output_dir = here::here('doc'), output_format = 'pdf_document')"
-	rm -f doc/*.log
   
 # Delete the generated data, plots, and tables
 .PHONY: clean
