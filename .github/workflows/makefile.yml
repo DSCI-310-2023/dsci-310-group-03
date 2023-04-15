@@ -10,6 +10,12 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    container: 
+      image: karlie-tr/dsci-310-group-03:latest
+      ports:
+        - 8787
+      volumes:
+        - .:/home/rstudio
 
     steps:
     - uses: actions/checkout@v3
