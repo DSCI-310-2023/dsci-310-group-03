@@ -15,7 +15,7 @@ jobs:
       ports:
         - 8787
       volumes:
-        - .:/home/rstudio
+        - /${PWD}:/home/rstudio
 
     steps:
     - uses: actions/checkout@v3
