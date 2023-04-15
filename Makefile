@@ -94,4 +94,4 @@ clean:
 # Create a docker contaner from specified image
 .PHONY: docker
 docker:
-	docker run --rm -it -v "/${PWD}:/home/rstudio" -p 8787:8787 -e PASSWORD=password karlietr/dsci-310-group-03:latest
+	docker run --rm -i -v "/${PWD}:/home/rstudio" -p 8787:8787 -e PASSWORD=password karlietr/dsci-310-group-03:latest
